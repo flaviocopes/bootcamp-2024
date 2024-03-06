@@ -1,0 +1,16 @@
+<button
+  aria-label='Show sidebar'
+  x-show='!showMenu'
+  @click='showMenu = !showMenu'
+  class='absolute flex justify-between float-left py-2 pl-2 -mt-1 text-white bg-blue-500 rounded-lg cursor-pointer'>
+  <svg
+    class='w-5 h-5 mr-2'
+    fill='none'
+    stroke-linecap='round'
+    stroke-linejoin='round'
+    stroke-width='2'
+    viewBox='0 0 24 24'
+    stroke='currentColor'>
+    <path d='M4 6h16M4 12h16M4 18h16'></path>
+  </svg>
+</button>

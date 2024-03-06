@@ -1,0 +1,22 @@
+---
+import IconStar from '@components/app/icons/IconStar.astro'
+
+const { task } = Astro.props
+---
+
+<div class='flex-none cursor-pointer'>
+  <form
+    hx-put={`/app/api/project/${task.project}/task/${task.id}`}
+    hx-target='this'
+    hx-trigger='click'
+    hx-swap='none'>
+    <input
+      type='hidden'
+      name='action'
+      value={task.starred ? 'unstar' : 'star'}
+    />
+    <div>
+      <IconStar active={task.starred} />
+    </div>
+  </form>
+</div>

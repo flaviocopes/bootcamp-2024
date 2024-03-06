@@ -1,20 +1,28 @@
 ---
 import LayoutApp from '@layouts/LayoutApp.astro'
-
+import TasksList from '@components/app/tasks/TasksList.astro'
 import ProjectCard from '@components/app/projects/ProjectCard.astro'
 import AddNewProjectCard from '@components/app/projects/AddNewProjectCard.astro'
-
+import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
 import { getProjects } from '@data/pocketbase'
 
 const projects = await getProjects()
 ---
 
 <LayoutApp title='Dashboard'>
-  <div class='py-10 mx-auto text-white max-w-7xl space-y-6'>
+  <div class='mx-auto text-white max-w-7xl space-y-6'>
     <div
-      class='rounded-lg bg-zinc-900 px-5 py-4 sm:py-2.5 text-xl sm:text-3xl md:text-5xl text-white uppercase text-center font-extrabold'>
+      class='rounded-lg bg-zinc-900 px-5 py-4 sm:py-2.5 text-xl sm:text-2xl md:text-3xl text-white uppercase text-center font-extrabold font-rounded'>
+      <div class='sm:hidden'>
+        <HamburgerMenuButton />
+      </div>
       Projects
     </div>
+
+    <div id='starred-tasks-list'>
+      <TasksList starred={true} />
+    </div>
+
     <div class='space-y-6'>
       <ul class='grid gap-6 sm:grid-cols-2'>
         {projects.map(project => <ProjectCard project={project} />)}

@@ -1,0 +1,65 @@
+---
+export const partial = true
+
+import { deleteProject, updateProject } from '@data/pocketbase'
+import { ProjectsStatusOptions } from '@data/pocketbase-types'
+const { project_id } = Astro.params
+
+if (!project_id) {
+  return new Response(null, {
+    status: 400,
+    statusText: 'Bad Request',
+  })
+}
+
+if (Astro.request.method === 'DELETE') {
+  await deleteProject(project_id)
+
+  return new Response(null, {
+    status: 204,
+    statusText: 'No Content',
+    headers: {
+      'HX-Redirect': '/app/dashboard',
+    },
+  })
+}
+
+if (Astro.request.method === 'PUT') {
+  const formData = await Astro.request.formData()
+
+  const action = formData.get('action')
+
+  if (action === 'change_status') {
+    let status = formData.get('status')
+
+    if (status) {
+      await updateProject(project_id, {
+        status:
+          ProjectsStatusOptions[status as keyof typeof ProjectsStatusOptions],
+      })
+    } else {
+      return new Response('Need to set "status" parameter', { status: 400 })
+    }
+  } else if (action === 'change_name') {
+    const project_name = formData.get('project_name') as string
+    if (project_name) {
+      await updateProject(project_id, {
+        name: project_name,
+      })
+      return new Response(null, {
+        status: 204,
+        statusText: 'No Content',
+        headers: {
+          'HX-Redirect': '/app/project/' + project_id,
+        },
+      })
+    } else {
+      return new Response('Need to set "project_name" parameter', {
+        status: 400,
+      })
+    }
+  } else {
+    return new Response('Invalid action', { status: 400 })
+  }
+}
+---

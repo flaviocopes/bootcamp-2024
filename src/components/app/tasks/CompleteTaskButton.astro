@@ -1,0 +1,18 @@
+---
+import IconCheck from '@components/app/icons/IconCheck.astro'
+const { task } = Astro.props
+---
+
+<form
+  hx-put={`/app/api/project/${task.project}/task/${task.id}`}
+  hx-target='this'
+  hx-trigger='click'
+  hx-swap='none'
+  hx-vals=`{"action": "${task.completed ? 'uncheck' : 'check'}"}`>
+  <div
+    class={`${
+      task.completed ? 'bg-green-500' : ' bg-gray-500'
+    } h-8 w-8 rounded-full flex items-center justify-center ring-2 ring-white cursor-pointer`}>
+    <IconCheck />
+  </div>
+</form>

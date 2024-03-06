@@ -1,0 +1,42 @@
+---
+const { task } = Astro.props
+---
+
+<div class='flex-1' x-data='{ editable: false }'>
+  <div
+    x-show='!editable'
+    class='text-zinc-800 dark:text-zinc-200'
+    @dblclick=`
+      editable = true
+    
+      //put the sibling input on focus
+      $nextTick(() => {
+        const inputfield = $el.nextElementSibling.querySelector('input#task-text')
+        inputfield.focus()
+        inputfield.select()
+      })
+    `>
+    {task.text}
+  </div>
+
+  <form
+    x-show='editable'
+    x-cloak
+    hx-put=`/app/api/project/${task.project}/task/${task.id}`
+    hx-trigger='change'
+    hx-target='this'
+    hx-swap='none'
+    class='w-full'
+    hx-vals=`{"action": "edit-text"}`>
+    <input
+      name='task-text'
+      id='task-text'
+      class='w-full px-0 -mt-2 bg-transparent outline-none text-zinc-800 dark:text-zinc-200 border-zinc-800 dark:border-zinc-200'
+      value={task.text}
+      @keydown.enter.prevent=`editable = false`
+      @keydown.escape.prevent=`editable = false`
+      @blur=`editable = false`
+      @click.outside='editable = false'
+    />
+  </form>
+</div>

@@ -1,0 +1,56 @@
+---
+const { project } = Astro.props
+---
+
+<style>
+  .select-custom-arrow-icon {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000"><path d="M7 10l5 5 5-5z"></path></svg>'); /* SVG arrow */
+    background-repeat: no-repeat;
+    background-position: right 0 center; /* Adjust as needed */
+    background-size: 1.5rem; /* Adjust as needed */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .select-custom-arrow-icon {
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fff"><path d="M7 10l5 5 5-5z"></path></svg>');
+    }
+  }
+</style>
+
+<select
+  aria-label='Change project status'
+  class='w-full h-8 px-4 text-sm border-r-8 border-transparent rounded appearance-none outlin outline-1 outline-neutral-700 select-custom-arrow-icon focus:ring-offset-0 dark:bg-zinc-900 text-zinc-800 dark:text-white'
+  name='status'
+  value={project.status}
+  hx-put={`/app/api/project/${project.id}`}
+  hx-swap='none'
+  hx-trigger='change'
+  hx-vals=`{"action": "change_status"}`>
+  <option
+    value='not started'
+    selected={project.status === 'not started' && 'selected'}>
+    not started
+  </option>
+  <option value='on hold' selected={project.status === 'on hold' && 'selected'}>
+    on hold
+  </option>
+  <option value='started' selected={project.status === 'started' && 'selected'}>
+    started
+  </option>
+  <option
+    value='in progress'
+    selected={project.status === 'in progress' && 'selected'}>
+    in progress
+  </option>
+  <option value='ongoing' selected={project.status === 'ongoing' && 'selected'}>
+    ongoing
+  </option>
+  <option
+    value='almost finished'
+    selected={project.status === 'almost finished' && 'selected'}>
+    almost finished
+  </option>
+  <option value='done' selected={project.status === 'done' && 'selected'}>
+    done
+  </option>
+</select>

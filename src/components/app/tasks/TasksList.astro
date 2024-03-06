@@ -1,0 +1,56 @@
+---
+import { getTasks, getStarredTasks } from '@data/pocketbase'
+
+import DeleteTaskButton from '@components/app/tasks/DeleteTaskButton.astro'
+import CompleteTaskButton from '@components/app/tasks/CompleteTaskButton.astro'
+import StarTaskButton from '@components/app/tasks/StarTaskButton.astro'
+import TaskText from '@components/app/tasks/TaskText.astro'
+
+const { project_id, done, starred } = Astro.props
+
+let tasks = null
+
+if (starred) {
+  tasks = await getStarredTasks()
+} else {
+  tasks = await getTasks({ project_id, done })
+}
+---
+
+{
+  tasks.length === 0 && !starred && (
+    <p class='text-center text-zinc-900 dark:text-white'>Nothing yet</p>
+  )
+}
+
+<ul class='space-y-6 mb-10'>
+  {
+    tasks.map(task => (
+      <li>
+        <div class='flex justify-between space-x-4 items-center'>
+          <div>
+            <CompleteTaskButton task={task} />
+          </div>
+          <div>
+            <StarTaskButton task={task} />
+          </div>
+
+          <TaskText task={task} />
+          {starred ? (
+            <div>
+              <a href={`/app/project/${task.project}`}>
+                <span class='border mt-0 py-0.5 px-2 self-start ounded-md bg-zinc-800 text-sm font-bold hidden sm:block'>
+                  {task.expand?.project?.name}
+                </span>
+              </a>
+            </div>
+          ) : (
+            <div>
+              <DeleteTaskButton task={task} />
+            </div>
+          )}
+        </div>
+      </li>
+    ))
+  }
+</ul>

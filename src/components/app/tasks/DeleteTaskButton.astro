@@ -1,0 +1,14 @@
+---
+import IconDelete from '@components/app/icons/IconDelete.astro'
+const { task } = Astro.props
+---
+
+<button
+  aria-label='Delete task'
+  class='focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
+  hx-swap='outerHTML'
+  hx-confirm='Are you sure?'
+  hx-target='closest li'
+  hx-delete={`/app/api/project/${task.project}/task/${task.id}`}>
+  <IconDelete />
+</button>

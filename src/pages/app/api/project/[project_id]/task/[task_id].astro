@@ -1,0 +1,59 @@
+---
+export const partial = true
+
+import TasksList from '@components/app/tasks/TasksList.astro'
+
+import { deleteTask, updateTask } from '@data/pocketbase'
+
+const { task_id = '', project_id = '' } = Astro.params
+
+if (Astro.request.method === 'DELETE') {
+  await deleteTask(task_id)
+  return new Response(null, { status: 200 })
+}
+
+if (Astro.request.method === 'PUT') {
+  const formData = await Astro.request.formData()
+  const action = formData.get('action') as string
+
+  if (action === 'check') {
+    await updateTask(task_id, {
+      completed: true,
+      completed_on: new Date().toISOString(),
+    })
+  } else if (action === 'uncheck') {
+    await updateTask(task_id, {
+      completed: false,
+      completed_on: '',
+    })
+  } else if (action === 'star') {
+    await updateTask(task_id, {
+      starred: true,
+      starred_on: new Date().toISOString(),
+    })
+  } else if (action === 'unstar') {
+    await updateTask(task_id, {
+      starred: false,
+      starred_on: '',
+    })
+  } else if (action === 'edit-text') {
+    await updateTask(task_id, {
+      text: formData.get('task-text') as string,
+    })
+  } else {
+    return new Response('Invalid action', { status: 400 })
+  }
+}
+---
+
+<div id='tasks-todo' hx-swap-oob='true'>
+  <TasksList done={false} project_id={project_id} />
+</div>
+
+<div id='tasks-done' hx-swap-oob='true'>
+  <TasksList done={true} project_id={project_id} />
+</div>
+
+<div id='starred-tasks-list' hx-swap-oob='true'>
+  <TasksList starred={true} />
+</div>
