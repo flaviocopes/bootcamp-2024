@@ -45,7 +45,7 @@ const projects = await getProjects()
             <a
               href={`/app/project/${project.id}`}
               class={
-                'lock bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-800 border-b border-zinc-800' +
+                'bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-800 border-b border-zinc-800' +
                 (Astro.url.pathname === `/app/project/${project.id}`
                   ? ' font-bold !bg-blue-800'
                   : '') +
