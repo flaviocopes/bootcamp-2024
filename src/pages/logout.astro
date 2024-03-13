@@ -1,0 +1,19 @@
+---
+import { pb } from '@data/pocketbase'
+import { isLoggedIn } from '@lib/auth'
+
+if (!(await isLoggedIn(Astro.request))) {
+  return Astro.redirect('/login')
+}
+
+if (Astro.request.method === 'POST') {
+  pb.authStore.clear()
+  return new Response('', {
+    status: 301,
+    headers: {
+      'HX-Redirect': '/login',
+      'Set-Cookie': 'pb_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC;',
+    },
+  })
+}
+---

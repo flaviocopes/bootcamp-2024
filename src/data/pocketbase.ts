@@ -13,30 +13,24 @@ type TexpandProject = {
 }
 
 export const pb = new PocketBase(
-  import.meta.env.POCKETBASE_URL ||
-    process.env.POCKETBASE_URL,
+  import.meta.env.POCKETBASE_URL || process.env.POCKETBASE_URL
 ) as TypedPocketBase
 
 // globally disable auto cancellation
 pb.autoCancellation(false)
 
 export async function getProjects() {
-  const projects = await pb
-    .collection('projects')
-    .getFullList()
+  const projects = await pb.collection('projects').getFullList()
 
-  return projects.sort(
-    (a, b) => getStatus(a) - getStatus(b),
-  )
+  return projects.sort((a, b) => getStatus(a) - getStatus(b))
 }
 
 export async function addProject(name: string) {
-  const newProject = await pb
-    .collection('projects')
-    .create({
-      name,
-      status: 'not started',
-    })
+  const newProject = await pb.collection('projects').create({
+    name,
+    created_by: pb.authStore.model?.id,
+    status: 'not started',
+  })
 
   return newProject
 }
@@ -47,12 +41,10 @@ export async function getProject(id: string) {
   return project
 }
 
-export async function addTask(
-  project_id: string,
-  text: string,
-) {
+export async function addTask(project_id: string, text: string) {
   const newTask = await pb.collection('tasks').create({
     project: project_id,
+    created_by: pb.authStore.model?.id,
     text,
   })
 
@@ -102,10 +94,7 @@ export async function deleteProject(id: string) {
   await pb.collection('projects').delete(id)
 }
 
-export async function updateProject(
-  id: string,
-  data: ProjectsRecord,
-) {
+export async function updateProject(id: string, data: ProjectsRecord) {
   await pb.collection('projects').update(id, data)
 }
 
@@ -113,10 +102,7 @@ export async function deleteTask(id: string) {
   await pb.collection('tasks').delete(id)
 }
 
-export async function updateTask(
-  id: string,
-  data: TasksRecord,
-) {
+export async function updateTask(id: string, data: TasksRecord) {
   await pb.collection('tasks').update(id, data)
 }
 

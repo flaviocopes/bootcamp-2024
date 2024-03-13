@@ -1,5 +1,6 @@
 ---
 import { getProjects } from '@data/pocketbase'
+import { getUserUsername } from '@lib/auth'
 
 const projects = await getProjects()
 ---
@@ -45,7 +46,7 @@ const projects = await getProjects()
             <a
               href={`/app/project/${project.id}`}
               class={
-                'lock bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-800 border-b border-zinc-800' +
+                'bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-800 border-b border-zinc-800' +
                 (Astro.url.pathname === `/app/project/${project.id}`
                   ? ' font-bold !bg-blue-800'
                   : '') +
@@ -64,4 +65,9 @@ const projects = await getProjects()
       }
     </div>
   </div>
+  <a
+    class='block py-2 pl-2 mb-10 border-b rounded-lg cursor-pointer bg-zinc-900 hover:bg-zinc-800 border-zinc-800'
+    hx-post='/logout'>
+    Logout @{getUserUsername(Astro.request)}
+  </a>
 </aside>

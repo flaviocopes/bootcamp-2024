@@ -1,0 +1,51 @@
+---
+import LayoutSite from '@layouts/LayoutSite.astro'
+import {
+  isLoggedIn,
+  sendVerificationEmail,
+  getCurrentUserEmail,
+} from '@lib/auth'
+
+if (!(await isLoggedIn(Astro.request))) {
+  return Astro.redirect('/login')
+}
+
+let email = await getCurrentUserEmail()
+let message = ''
+
+if (Astro.request.method === 'POST') {
+  await sendVerificationEmail(email)
+  message = '✅ Verification email sent'
+}
+---
+
+<LayoutSite title='SECRETPLAN'>
+  <div class='w-full max-w-md mx-auto'>
+    <a href='/'>
+      <img
+        src='/logo.svg'
+        alt='Logo'
+        class='h-16 mx-auto my-20 invert dark:invert-0'
+      />
+    </a>
+  </div>
+
+  <div class='mx-auto mt-10 text-white gap-y-8 sm:mt-10 sm:mx-0'>
+    <div
+      class='max-w-md p-8 mx-auto text-center bg-black border-4 rounded-3xl ring-1 ring-gray-200 xl:p-10 sm:mt-8'>
+      <p>Please verify your email</p>
+      <p>
+        We sent an email to {email}
+      </p>
+
+      <form method='post'>
+        <input
+          type='submit'
+          class='block w-full px-3 py-2 mt-8 text-sm font-semibold leading-6 text-center text-white rounded-md cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ring-1 ring-inset ring-blue-200 hover:ring-blue-300 hover:bg-blue-600'
+          value='Resend verification email'
+        />
+      </form>
+      <p class='mt-5 text-center text-white'>{message}</p>
+    </div>
+  </div>
+</LayoutSite>

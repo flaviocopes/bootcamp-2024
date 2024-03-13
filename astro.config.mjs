@@ -9,6 +9,9 @@ export default defineConfig({
   integrations: [tailwind()],
   output: 'server',
   adapter: node({
-    mode: 'standalone'
-  })
+    mode: 'standalone',
+  }),
+  redirects: {
+    '/app': '/app/dashboard',
+  },
 })
