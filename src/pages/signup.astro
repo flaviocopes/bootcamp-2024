@@ -87,7 +87,7 @@ if (Astro.request.method === 'POST') {
             type='password'
             id='password'
             name='password'
-            pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
+            pattern='(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
             title='Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters'
             class='w-2/3 p-1 text-black border'
           />
@@ -99,7 +99,7 @@ if (Astro.request.method === 'POST') {
             type='password'
             id='password_confirm'
             name='password_confirm'
-            pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
+            pattern='(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
             class='w-2/3 p-1 text-black border self-baseline'
           />
         </p>
