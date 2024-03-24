@@ -8,7 +8,13 @@ import { deleteTask, updateTask } from '@data/pocketbase'
 const { task_id = '', project_id = '' } = Astro.params
 
 if (Astro.request.method === 'DELETE') {
-  await deleteTask(task_id)
+  try {
+    await deleteTask(task_id)
+  } catch (e) {
+    return new Response('An error occurred', {
+      status: 400,
+    })
+  }
   return new Response(null, { status: 200 })
 }
 
@@ -16,32 +22,63 @@ if (Astro.request.method === 'PUT') {
   const formData = await Astro.request.formData()
   const action = formData.get('action') as string
 
-  if (action === 'check') {
-    await updateTask(task_id, {
-      completed: true,
-      completed_on: new Date().toISOString(),
+  try {
+    switch (action) {
+      case 'check':
+        await updateTask(task_id, {
+          completed: true,
+          completed_on: new Date().toISOString(),
+        })
+        break
+      case 'uncheck':
+        await updateTask(task_id, {
+          completed: false,
+          completed_on: '',
+        })
+        break
+      case 'star':
+        await updateTask(task_id, {
+          starred: true,
+          starred_on: new Date().toISOString(),
+        })
+        break
+      case 'unstar':
+        await updateTask(task_id, {
+          starred: false,
+          starred_on: '',
+        })
+        break
+      case 'edit-text':
+        await updateTask(task_id, {
+          text: formData.get('task-text') as string,
+        })
+        break
+      case 'upload':
+        try {
+          await updateTask(task_id, {
+            images: formData.getAll('images') as string[],
+          })
+        } catch (e) {
+          return new Response('Cannot upload image', {
+            status: 400,
+          })
+        }
+        break
+      case 'delete-image':
+        await updateTask(task_id, {
+          //@ts-expect-error
+          'images-': formData.get('image') as string,
+        })
+        break
+      default:
+        return new Response('Invalid action', {
+          status: 400,
+        })
+    }
+  } catch (e) {
+    return new Response('An error occurred', {
+      status: 400,
     })
-  } else if (action === 'uncheck') {
-    await updateTask(task_id, {
-      completed: false,
-      completed_on: '',
-    })
-  } else if (action === 'star') {
-    await updateTask(task_id, {
-      starred: true,
-      starred_on: new Date().toISOString(),
-    })
-  } else if (action === 'unstar') {
-    await updateTask(task_id, {
-      starred: false,
-      starred_on: '',
-    })
-  } else if (action === 'edit-text') {
-    await updateTask(task_id, {
-      text: formData.get('task-text') as string,
-    })
-  } else {
-    return new Response('Invalid action', { status: 400 })
   }
 }
 ---

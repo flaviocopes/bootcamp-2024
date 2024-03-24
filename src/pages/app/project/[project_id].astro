@@ -6,9 +6,11 @@ import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
 import ProjectStatus from '@components/app/projects/ProjectStatus.astro'
 const { project_id = '' } = Astro.params
 import TasksList from '@components/app/tasks/TasksList.astro'
-const project = await getProject(project_id)
 
-if (!project) {
+let project
+try {
+  project = await getProject(project_id)
+} catch (e) {
   return Astro.redirect('/app/dashboard')
 }
 ---
