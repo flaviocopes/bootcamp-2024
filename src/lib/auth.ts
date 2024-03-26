@@ -48,7 +48,7 @@ export function setCookieAndRedirectToDashboard() {
       Location: '/app/dashboard',
       //set secure false on localhost for Safari compatibility
       'Set-Cookie': pb.authStore.exportToCookie({
-        secure: process.env.DEV ? false : true,
+        secure: import.meta.env.DEV ? false : true,
       }),
     },
   })
