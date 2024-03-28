@@ -6,16 +6,20 @@ import { addProject } from '@data/pocketbase'
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
 
+  const team_id = formData.get('team_id')?.toString() || ''
   const project_name = formData.get('project_name')?.toString() || ''
 
+  let project
+
   try {
-    await addProject(project_name)
-  } catch (e) {
-    return new Response('An error occurred', {
-      status: 400,
+    project = await addProject(project_name, team_id)
+  } catch (e: any) {
+    console.log(e)
+    return new Response(e.response.message, {
+      status: e.response.code,
     })
   }
 
-  Astro.response.headers.set('HX-Redirect', `/app/dashboard`)
+  Astro.response.headers.set('HX-Redirect', `/app/project/${project.id}`)
 }
 ---

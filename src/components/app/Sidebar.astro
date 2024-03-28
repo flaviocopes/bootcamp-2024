@@ -1,8 +1,29 @@
 ---
-import { getProjects } from '@data/pocketbase'
+import { getProjects, getTeams, getProject } from '@data/pocketbase'
 import { getUserUsername } from '@lib/auth'
 
-const projects = await getProjects()
+import type { ProjectsResponse } from '@data/pocketbase-types'
+
+const projects = await getProjects({})
+const teams = await getTeams()
+
+const teams_projects: {
+  [key: string]: ProjectsResponse[]
+} = {}
+
+await Promise.all(
+  teams.map(async team => {
+    teams_projects[team.id] = await getProjects({
+      team_id: team.id,
+    })
+  })
+)
+
+let team_id = ''
+if (Astro.params.project_id) {
+  const project = await getProject(Astro.params.project_id)
+  team_id = project.team
+}
 
 const p_classes =
   'block bg-zinc-100 dark:bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 border dark:border-0 dark:border-b border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-white '
@@ -38,7 +59,9 @@ const p_classes =
         (projects.length === 0 ? ' rounded-b-lg ' : '') +
         (Astro.url.pathname === '/app/dashboard' &&
           ' font-bold !bg-blue-800 ') +
-        (Astro.params.project_id && ' !bg-white text-black border ')}>
+        (Astro.params.project_id &&
+          !team_id &&
+          ' !bg-white text-black border ')}>
       Your projects
     </a>
 
@@ -68,6 +91,60 @@ const p_classes =
       }
     </div>
   </div>
+
+  {
+    teams.length > 0 &&
+      teams.map(team => {
+        return (
+          <div class='mb-6 rounded-lg bg-zinc-800'>
+            <a
+              href={`/app/team/${team.id}`}
+              class={
+                p_classes +
+                ' uppercase rounded-t-lg font-black ' +
+                (teams_projects[team.id].length === 0 ? ' rounded-b-lg ' : '') +
+                (Astro.url.pathname.startsWith(`/app/team/${team.id}`)
+                  ? '  !bg-blue-800 !text-white font-bold '
+                  : '') +
+                (Astro.params.project_id && team_id === team.id
+                  ? '  !bg-white dark:!text-black border '
+                  : '') +
+                'flex items-center justify-between'
+              }>
+              {team.name}
+              <span class='p-1 pr-1 mr-2 text-sm font-bold bg-white border rounded-md text-zinc-800'>
+                team
+              </span>
+            </a>
+            <div class='rounded-b-lg'>
+              {teams_projects[team.id].map((project, index) => {
+                return (
+                  <a
+                    href={`/app/project/${project.id}`}
+                    class={
+                      p_classes +
+                      (Astro.url.pathname === `/app/project/${project.id}`
+                        ? ' font-bold !bg-blue-800 !text-white'
+                        : '') +
+                      (index === teams_projects[team.id].length - 1
+                        ? ' rounded-b-lg '
+                        : '') +
+                      ' flex justify-between'
+                    }>
+                    <span>{project.name}</span>
+                    <span class='mr-2'>
+                      {Astro.url.pathname === `/app/project/${project.id}` && (
+                        <span>▶︎</span>
+                      )}
+                    </span>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })
+  }
 
   <button
     class={p_classes + ' rounded-t-lg w-full text-left outline-none'}

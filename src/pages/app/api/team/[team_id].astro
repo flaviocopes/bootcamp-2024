@@ -1,0 +1,19 @@
+---
+export const partial = true
+
+import { deleteTeam } from '@data/pocketbase'
+
+const { team_id = '' } = Astro.params
+
+if (Astro.request.method === 'DELETE') {
+  await deleteTeam(team_id)
+
+  return new Response(null, {
+    status: 204,
+    statusText: 'No Content',
+    headers: {
+      'HX-Redirect': '/app/dashboard',
+    },
+  })
+}
+---

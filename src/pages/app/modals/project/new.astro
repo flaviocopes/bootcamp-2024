@@ -5,10 +5,15 @@ import ModalLayout from '@components/app/modals/ModalLayout.astro'
 import ButtonSubmit from '@components/app/modals/ButtonSubmit.astro'
 import ButtonCancel from '@components/app/modals/ButtonCancel.astro'
 import InputField from '@components/app/modals/InputField.astro'
+
+const team_id = Astro.url.searchParams.get('team_id')?.toString() || ''
 ---
 
 <ModalLayout title='New project'>
-  <form class='space-y-6' hx-post='/app/api/projects'>
+  <form
+    class='space-y-6'
+    hx-post='/app/api/projects'
+    hx-vals=`{"team_id": "${team_id}"}`>
     <div>
       <div class='mt-1'>
         <InputField name='project_name' />

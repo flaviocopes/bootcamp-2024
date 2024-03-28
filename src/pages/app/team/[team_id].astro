@@ -1,20 +1,25 @@
 ---
 import Layout from '@layouts/LayoutApp.astro'
-import { getTeam, userIsTeamOwner } from '@data/pocketbase'
+import { getTeam, userIsTeamOwner, getProjects } from '@data/pocketbase'
 
 import IconDelete from '@components/app/icons/IconDelete.astro'
+import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
+import AddNewProjectCard from '@components/app/projects/AddNewProjectCard.astro'
+import TasksList from '@components/app/tasks/TasksList.astro'
+import ProjectCard from '@components/app/projects/ProjectCard.astro'
 
 const { team_id = '' } = Astro.params
 
-let team = await getTeam(team_id)
-
-if (!team) {
+let team
+try {
+  team = await getTeam(team_id)
+} catch (e) {
   return Astro.redirect('/app/dashboard')
 }
 
 const is_owner = await userIsTeamOwner(team_id)
 
-import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
+const projects = await getProjects({ team_id })
 ---
 
 <Layout title='SECRETPLAN'>
@@ -53,6 +58,24 @@ import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
                 Delete team
               </button>
             </div>
+          </div>
+        </>
+      )
+    }
+
+    {
+      team.status === 'active' && (
+        <>
+          <div id='starred-tasks-list'>
+            <TasksList starred={true} team_id={team_id} />
+          </div>
+          <div class='space-y-6'>
+            <ul class='grid gap-6 sm:grid-cols-2'>
+              {projects.map(project => (
+                <ProjectCard project={project} />
+              ))}
+            </ul>
+            <AddNewProjectCard team_id={team_id} />
           </div>
         </>
       )

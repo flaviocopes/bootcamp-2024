@@ -1,3 +1,7 @@
+---
+const { team_id } = Astro.props
+---
+
 <div class='text-white bg-zinc-800 rounded-lg shadow'>
   <div
     class='flex items-center justify-between w-full p-6 text-center space-x-6'>
@@ -5,7 +9,9 @@
       <button
         type='button'
         class='inline-flex items-center justify-center px-6 py-2 text-sm font-bold text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 select-none'
-        hx-get='/app/modals/project/new'
+        hx-get={team_id
+          ? `/app/modals/project/new?team_id=${team_id}`
+          : `/app/modals/project/new`}
         hx-target='dialog'>
         Add new project
       </button>
