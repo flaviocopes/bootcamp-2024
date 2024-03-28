@@ -1,0 +1,62 @@
+---
+import Layout from '@layouts/LayoutApp.astro'
+import { getTeam, userIsTeamOwner } from '@data/pocketbase'
+
+import IconDelete from '@components/app/icons/IconDelete.astro'
+
+const { team_id = '' } = Astro.params
+
+let team
+try {
+  team = await getTeam(team_id)
+} catch (e) {
+  return Astro.redirect('/app/dashboard')
+}
+
+const is_owner = await userIsTeamOwner(team_id)
+
+import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
+---
+
+<Layout title='SECRETPLAN'>
+  <div class='mx-auto space-y-6 text-white max-w-7xl'>
+    <div
+      class='rounded-lg bg-zinc-900 px-5 py-4 sm:py-2.5 text-xl sm:text-2xl md:text-3xl text-white uppercase text-center font-extrabold font-rounded'>
+      <div class='sm:hidden'>
+        <HamburgerMenuButton />
+      </div>
+
+      <span hx-get=`/app/modals/team/${team.id}/edit` hx-target='dialog'
+        >{team.name}</span
+      >
+    </div>
+
+    {
+      team.status === 'inactive' && is_owner && (
+        <>
+          <div class='p-10 mt-0 text-white rounded-lg shadow bg-zinc-800'>
+            <button
+              hx-post={`/app/api/team/${team_id}/activate`}
+              hx-swap='none'
+              class='block mx-auto underline'>
+              Activate the team now
+            </button>
+          </div>
+          <div class='p-10 mt-10 text-white rounded-lg shadow bg-zinc-800'>
+            <h2 class='pb-0 font-black text-center uppercase'>Danger zone</h2>
+            <div class='grid grid-cols-1 '>
+              <button
+                hx-delete={`/app/api/team/${team_id}`}
+                hx-confirm='Are you sure?'
+                type='button'
+                class='inline-flex items-center gap-2 px-3 py-2 mt-5 mr-2 text-sm font-medium leading-4 text-left text-white border border-transparent rounded-md shadow-sm bg-zinc-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
+                <IconDelete />
+                Delete team
+              </button>
+            </div>
+          </div>
+        </>
+      )
+    }
+  </div>
+</Layout>

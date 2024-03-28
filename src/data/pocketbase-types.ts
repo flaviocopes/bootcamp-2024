@@ -8,6 +8,7 @@ import type { RecordService } from 'pocketbase'
 export enum Collections {
 	Projects = "projects",
 	Tasks = "tasks",
+	Teams = "teams",
 	Users = "users",
 }
 
@@ -62,6 +63,20 @@ export type TasksRecord = {
 	text?: string
 }
 
+export enum TeamsStatusOptions {
+	"inactive" = "inactive",
+	"active" = "active",
+	"freezed" = "freezed",
+}
+export type TeamsRecord = {
+	created_by?: RecordIdString
+	members?: RecordIdString[]
+	name?: string
+	portal_url?: string
+	status?: TeamsStatusOptions
+	stripe_subscription_id?: string
+}
+
 export type UsersRecord = {
 	avatar?: string
 	name?: string
@@ -70,6 +85,7 @@ export type UsersRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
 export type TasksResponse<Texpand = unknown> = Required<TasksRecord> & BaseSystemFields<Texpand>
+export type TeamsResponse<Texpand = unknown> = Required<TeamsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -77,12 +93,14 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 export type CollectionRecords = {
 	projects: ProjectsRecord
 	tasks: TasksRecord
+	teams: TeamsRecord
 	users: UsersRecord
 }
 
 export type CollectionResponses = {
 	projects: ProjectsResponse
 	tasks: TasksResponse
+	teams: TeamsResponse
 	users: UsersResponse
 }
 
@@ -92,5 +110,6 @@ export type CollectionResponses = {
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'projects'): RecordService<ProjectsResponse>
 	collection(idOrName: 'tasks'): RecordService<TasksResponse>
+	collection(idOrName: 'teams'): RecordService<TeamsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

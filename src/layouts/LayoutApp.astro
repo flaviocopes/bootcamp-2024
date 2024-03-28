@@ -37,6 +37,8 @@ const { title = 'Secretplan' } = Astro.props
         }
       }
 
+      htmx.config.selfRequestsOnly = true
+
       window.htmx = htmx //optional
       window.Alpine = Alpine //optional
 
@@ -58,6 +60,10 @@ const { title = 'Secretplan' } = Astro.props
             }
           }
         })
+      })
+
+      document.addEventListener('htmx:sendError', function (event) {
+        alert('A connection error occurred')
       })
 
       function dragAndDropIntoTask() {

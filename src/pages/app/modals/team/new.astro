@@ -1,0 +1,22 @@
+---
+export const partial = true
+
+import ModalLayout from '@components/app/modals/ModalLayout.astro'
+import ButtonSubmit from '@components/app/modals/ButtonSubmit.astro'
+import ButtonCancel from '@components/app/modals/ButtonCancel.astro'
+import InputField from '@components/app/modals/InputField.astro'
+---
+
+<ModalLayout title='New team'>
+  <form class='space-y-6' hx-post='/app/api/teams'>
+    <div>
+      <div class='mt-1'>
+        <InputField name='team_name' />
+      </div>
+    </div>
+    <div class='flex justify-center'>
+      <ButtonSubmit />
+      <ButtonCancel />
+    </div>
+  </form>
+</ModalLayout>
