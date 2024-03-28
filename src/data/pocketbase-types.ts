@@ -50,6 +50,7 @@ export type ProjectsRecord = {
 	created_by?: RecordIdString
 	name?: string
 	status?: ProjectsStatusOptions
+	team?: RecordIdString
 }
 
 export type TasksRecord = {
