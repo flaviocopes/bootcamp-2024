@@ -6,6 +6,7 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	Invites = "invites",
 	Projects = "projects",
 	Tasks = "tasks",
 	Teams = "teams",
@@ -35,6 +36,11 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export type InvitesRecord = {
+	email?: string
+	team?: RecordIdString
+}
 
 export enum ProjectsStatusOptions {
 	"not started" = "not started",
@@ -84,6 +90,7 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type InvitesResponse<Texpand = unknown> = Required<InvitesRecord> & BaseSystemFields<Texpand>
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
 export type TasksResponse<Texpand = unknown> = Required<TasksRecord> & BaseSystemFields<Texpand>
 export type TeamsResponse<Texpand = unknown> = Required<TeamsRecord> & BaseSystemFields<Texpand>
@@ -92,6 +99,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	invites: InvitesRecord
 	projects: ProjectsRecord
 	tasks: TasksRecord
 	teams: TeamsRecord
@@ -99,6 +107,7 @@ export type CollectionRecords = {
 }
 
 export type CollectionResponses = {
+	invites: InvitesResponse
 	projects: ProjectsResponse
 	tasks: TasksResponse
 	teams: TeamsResponse
@@ -109,6 +118,7 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: 'invites'): RecordService<InvitesResponse>
 	collection(idOrName: 'projects'): RecordService<ProjectsResponse>
 	collection(idOrName: 'tasks'): RecordService<TasksResponse>
 	collection(idOrName: 'teams'): RecordService<TeamsResponse>

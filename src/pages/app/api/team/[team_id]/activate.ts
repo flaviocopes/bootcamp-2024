@@ -1,5 +1,5 @@
 import { initStripe } from '@lib/stripe'
-import { isLoggedIn } from '@lib/auth'
+
 import type { APIRoute } from 'astro'
 
 export const POST: APIRoute = async ({ params, request }) => {

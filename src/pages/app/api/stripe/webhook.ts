@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 import type { APIRoute } from 'astro'
 
-import { updateTeam } from '@src/data/pocketbase'
+import { updateTeam, getTeam } from '@src/data/pocketbase'
 import { TeamsStatusOptions } from '@src/data/pocketbase-types'
 import { initStripe } from '@lib/stripe'
 
@@ -46,6 +46,28 @@ export const POST: APIRoute = async ({ request }) => {
       status: TeamsStatusOptions.active,
       portal_url,
       stripe_subscription_id: subscription.id,
+    })
+  }
+
+  if (event.type === 'customer.subscription.deleted') {
+    const { id: subscription_id, metadata } = event.data.object
+
+    const { team_id } = metadata
+
+    const team = await getTeam(team_id)
+
+    if (!team) {
+      throw new Error('Team not found')
+    }
+
+    const { stripe_subscription_id } = team
+
+    if (stripe_subscription_id !== subscription_id) {
+      throw new Error('Subscription ID mismatch')
+    }
+
+    await updateTeam(team_id, {
+      status: TeamsStatusOptions.freezed,
     })
   }
 

@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 
-export const GET: APIRoute = async context => {
+export const GET: APIRoute = async (context) => {
   const team_id = context.params.team_id
 
   const team_page_url = new URL(
@@ -9,7 +9,7 @@ export const GET: APIRoute = async context => {
   ).toString()
 
   return new Response(
-    '<html><head><meta http-equiv="refresh" content="0;url=' +
+    '<html><head><meta http-equiv="refresh" content="1;url=' +
       team_page_url +
       '"></head><body></body></html>',
     {

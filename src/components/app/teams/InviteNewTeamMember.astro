@@ -1,0 +1,22 @@
+---
+const { team } = Astro.props
+---
+
+{
+  team.status === 'active' && (
+    <div>
+      <form class='flex' hx-post={`/app/api/team/${team.id}/invites`}>
+        <input
+          type='email'
+          name='email'
+          id='email'
+          class='w-2/3 px-2 py-0 text-black rounded-lg border border-zinc-300'
+          placeholder='Email address'
+        />
+        <button class='w-1/3 p-2 ml-3 font-bold text-white bg-blue-600 rounded-lg'>
+          Invite
+        </button>
+      </form>
+    </div>
+  )
+}

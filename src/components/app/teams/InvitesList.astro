@@ -1,0 +1,22 @@
+---
+const { team } = Astro.props
+
+import { getInvitesForTeam } from '@data/pocketbase'
+
+const invites = await getInvitesForTeam(team.id)
+---
+
+{
+  invites.length > 0 && (
+    <div class='pb-10'>
+      <h2 class='pb-4 mt-0 text-lg font-bold text-zinc-800 dark:text-white text-center uppercase'>
+        Invited people
+      </h2>
+      <ul class='list-disc list-inside'>
+        {invites.map(invite => (
+          <li>{invite.email}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}

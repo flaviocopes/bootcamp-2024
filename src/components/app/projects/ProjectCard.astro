@@ -1,5 +1,5 @@
 ---
-const { project } = Astro.props
+const { project, freezed } = Astro.props
 
 export function projectStatus(status: string) {
   switch (status) {
@@ -52,7 +52,9 @@ export function projectStatus(status: string) {
 
 <li
   class='text-zinc-800 dark:text-white border dark:border-none rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 hover:dark:bg-zinc-700'>
-  <a href={`/app/project/${project.id}`}>
+  <a
+    href={freezed ? '' : `/app/project/${project.id}`}
+    class={`${freezed ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
     <div class='flex justify-center w-full p-6'>
       <h3 class='text-lg font-bold truncate'>
         {project.name}

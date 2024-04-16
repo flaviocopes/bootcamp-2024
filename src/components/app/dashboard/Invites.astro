@@ -1,0 +1,42 @@
+---
+export const partial = true
+
+import { getYourInvites } from '@data/pocketbase'
+
+const invites = await getYourInvites()
+---
+
+{
+  invites.length > 0 && (
+    <ul class='mb-10'>
+      {invites.map((invite) => {
+        return (
+          <li class='flex items-center justify-between w-full mb-2'>
+            <p>
+              You got invited to the{' '}
+              <strong>{invite.expand?.team.name}</strong>{' '}
+              team
+            </p>
+
+            <div>
+              <button
+                class='px-2 py-1 mx-1 text-black bg-white rounded-lg'
+                hx-post={`/app/api/invite/${invite.id}/accept`}
+                hx-swap='none'
+              >
+                accept
+              </button>
+              <button
+                class='px-2 py-1 mx-1 text-black bg-white rounded-lg'
+                hx-post={`/app/api/invite/${invite.id}/decline`}
+                hx-swap='none'
+              >
+                decline
+              </button>
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}

@@ -1,11 +1,20 @@
 ---
 export const partial = true
 
-import { deleteTeam } from '@data/pocketbase'
+import { deleteTeam, updateTeam, getTeam } from '@data/pocketbase'
 
 const { team_id = '' } = Astro.params
 
+const team = await getTeam(team_id)
+
+import { cancelSubscription, searchSubscriptionsByTeamId } from '@lib/stripe'
+
 if (Astro.request.method === 'DELETE') {
+  const res = await searchSubscriptionsByTeamId(team_id)
+  if (res.length > 0) {
+    await cancelSubscription(res[0].id)
+  }
+
   await deleteTeam(team_id)
 
   return new Response(null, {
@@ -16,4 +25,35 @@ if (Astro.request.method === 'DELETE') {
     },
   })
 }
+
+//update team
+if (Astro.request.method === 'PUT') {
+  const formData = await Astro.request.formData()
+  const action = formData.get('action') as string
+
+  if (action === 'change_name') {
+    const team_name = formData.get('team_name') as string
+    if (team_name) {
+      await updateTeam(team_id, {
+        name: team_name,
+      })
+
+      return new Response(null, {
+        status: 204,
+        statusText: 'No Content',
+        headers: {
+          'HX-Redirect': '/app/team/' + team_id,
+        },
+      })
+    } else {
+      return new Response('Need to set "team_name" parameter', { status: 400 })
+    }
+  } else {
+    return new Response('Invalid action', { status: 400 })
+  }
+}
 ---
+
+<div id='team-name-text' hx-swap-oob='innerHTML'>
+  {team.name}
+</div>

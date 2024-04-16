@@ -7,6 +7,7 @@ import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
 import AddNewProjectCard from '@components/app/projects/AddNewProjectCard.astro'
 import TasksList from '@components/app/tasks/TasksList.astro'
 import ProjectCard from '@components/app/projects/ProjectCard.astro'
+import IconCog from '@components/app/icons/IconCog.astro'
 
 const { team_id = '' } = Astro.params
 
@@ -34,6 +35,34 @@ const projects = await getProjects({ team_id })
         >{team.name}</span
       >
     </div>
+
+    {
+      team.status === 'freezed' && (
+        <>
+          <div class='p-10 mt-0 text-white rounded-lg shadow bg-zinc-800'>
+            Your team is freezed as the subscription got cancelled.
+            {is_owner && (
+              <p>
+                <a
+                  hx-post={`/app/api/team/${team_id}/activate`}
+                  hx-swap='none'
+                  class='underline cursor-pointer'>
+                  Reactivate the team now
+                </a>{' '}
+                to access the projects.
+              </p>
+            )}
+          </div>
+          <div class='space-y-6'>
+            <ul class='grid gap-6 sm:grid-cols-2'>
+              {projects.map(project => (
+                <ProjectCard project={project} freezed={true} />
+              ))}
+            </ul>
+          </div>
+        </>
+      )
+    }
 
     {
       team.status === 'inactive' && is_owner && (
@@ -76,6 +105,19 @@ const projects = await getProjects({ team_id })
               ))}
             </ul>
             <AddNewProjectCard team_id={team_id} />
+          </div>
+
+          <div class='text-white rounded-lg border dark:border-0 bg-zinc-100 dark:bg-zinc-800'>
+            <div class='flex items-center justify-between w-full p-6 space-x-6 text-center'>
+              <div class='flex-1 mx-auto'>
+                <a
+                  href={`/app/team/${team_id}/settings`}
+                  class='inline-flex items-center px-3 py-2  mr-2 text-sm font-medium text-left text-white border border-transparent leading-4 bg-zinc-600 rounded-md shadow-sm hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500 gap-2'>
+                  <IconCog />
+                  Settings
+                </a>
+              </div>
+            </div>
           </div>
         </>
       )

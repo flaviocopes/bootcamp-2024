@@ -1,0 +1,33 @@
+---
+export const partial = true
+
+import { userIsTeamOwner, updateTeam } from '@data/pocketbase'
+import { TeamsStatusOptions } from '@data/pocketbase-types'
+import { cancelSubscription, searchSubscriptionsByTeamId } from '@lib/stripe'
+
+const { team_id = '' } = Astro.params
+
+//check user is owner of the team
+if (!(await userIsTeamOwner(team_id))) {
+  return new Response('Not authorized', { status: 401 })
+}
+
+//delete subscription
+if (Astro.request.method === 'DELETE') {
+  //delete sub on Stripe, mark project as freezed
+  const res = await searchSubscriptionsByTeamId(team_id)
+  await cancelSubscription(res[0].id)
+
+  await updateTeam(team_id, {
+    status: TeamsStatusOptions.freezed,
+  })
+
+  return new Response(null, {
+    status: 204,
+    statusText: 'No Content',
+    headers: {
+      'HX-Redirect': '/app/team/' + team_id,
+    },
+  })
+}
+---

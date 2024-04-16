@@ -6,7 +6,7 @@ import { addProject } from '@data/pocketbase'
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
 
-  const team_id = formData.get('team_id') as string
+  const team_id = formData.get('team_id')?.toString() || ''
   const project_name = formData.get('project_name')?.toString() || ''
 
   let project

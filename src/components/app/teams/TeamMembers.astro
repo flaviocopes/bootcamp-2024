@@ -1,0 +1,51 @@
+---
+const { team } = Astro.props
+
+import { getMembersOfTeam, getOwnerOfTeam } from '@data/pocketbase'
+
+import { getCurrentUserId } from '@lib/auth'
+
+const members = await getMembersOfTeam(team.id)
+const owner = await getOwnerOfTeam(team)
+---
+
+<h2
+  class='pb-10 text-lg font-black uppercase text-zinc-800 dark:text-white text-center'>
+  Team members
+</h2>
+<div class='text-left flow-root'>
+  <div class='pb-10 list-disc list-inside text-zinc-800 dark:text-white flex'>
+    <span
+      class='rounded-md p-1 py-0.5 bg-blue-500
+        text-white font-bold text-sm mr-1'>
+      owner
+    </span>
+    {
+      owner.id == getCurrentUserId() && (
+        <span
+          class='rounded-md p-1 py-0.5 bg-orange-500
+        text-white font-bold text-sm mr-1'>
+          you
+        </span>
+      )
+    }
+
+    <span class='flex-1 ml-2'>{owner.username}</span>
+    <span>{owner.email}</span>
+  </div>
+  {
+    members?.map(member => (
+      <div class='pb-10 list-disc list-inside text-zinc-800 dark:text-white flex'>
+        {member.id == getCurrentUserId() && (
+          <span
+            class='rounded-md p-1 py-0.5 bg-orange-500
+        text-white font-bold text-sm uppercase mr-1'>
+            you
+          </span>
+        )}
+        <span class='flex-1'>{member.username}</span>
+        <span>{member.email}</span>
+      </div>
+    ))
+  }
+</div>
