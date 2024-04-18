@@ -107,18 +107,21 @@ const projects = await getProjects({ team_id })
             <AddNewProjectCard team_id={team_id} />
           </div>
 
-          <div class='text-white rounded-lg border dark:border-0 bg-zinc-100 dark:bg-zinc-800'>
-            <div class='flex items-center justify-between w-full p-6 space-x-6 text-center'>
-              <div class='flex-1 mx-auto'>
-                <a
-                  href={`/app/team/${team_id}/settings`}
-                  class='inline-flex items-center px-3 py-2  mr-2 text-sm font-medium text-left text-white border border-transparent leading-4 bg-zinc-600 rounded-md shadow-sm hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500 gap-2'>
-                  <IconCog />
-                  Settings
-                </a>
+          {is_owner && (
+            <div class='text-white rounded-lg border dark:border-0 bg-zinc-100 dark:bg-zinc-800'>
+              <div class='flex items-center justify-between w-full p-6 space-x-6 text-center'>
+                <div class='flex-1 mx-auto'>
+                  <a
+                    href={`/app/team/${team_id}/settings`}
+                    class='inline-flex items-center px-3 py-2  mr-2 text-sm font-medium text-left text-white border border-transparent leading-4 bg-zinc-600 rounded-md shadow-sm hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500 gap-2'
+                  >
+                    <IconCog />
+                    Settings
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </>
       )
     }
