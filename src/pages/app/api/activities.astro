@@ -1,0 +1,19 @@
+---
+export const partial = true
+
+import ActivitiesList from '@components/app/ActivitiesList.astro'
+
+import { getActivities } from '@data/pocketbase'
+
+const team_id = Astro.url.searchParams.get('team_id')?.toString() || ''
+const project_id = Astro.url.searchParams.get('project_id')?.toString() || ''
+const user_id = Astro.url.searchParams.get('user_id')?.toString() || ''
+
+const activities = await getActivities({
+  team_id,
+  project_id,
+  user_id,
+})
+---
+
+<ActivitiesList activities={activities} />

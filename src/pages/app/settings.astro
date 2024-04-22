@@ -1,0 +1,51 @@
+---
+import { getUserUsername } from '@lib/auth'
+import LayoutApp from '@layouts/LayoutApp.astro'
+import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
+
+const username = await getUserUsername(Astro.request)
+---
+
+<LayoutApp title='Activities'>
+  <div class='mx-auto text-white space-y-6 max-w-7xl'>
+    <div
+      class='rounded-lg bg-zinc-900 px-5 py-4 sm:py-2.5 text-xl sm:text-2xl md:text-3xl text-white uppercase text-center font-extrabold font-rounded'>
+      <div class='sm:hidden'>
+        <HamburgerMenuButton />
+      </div>
+      Settings
+    </div>
+
+    <div class='mx-auto text-white max-w-7xl'>
+      <div>
+        <div
+          class='p-10 text-white rounded-lg shadow bg-zinc-100 dark:bg-zinc-800'>
+          <h2
+            class='pb-10 text-lg font-black uppercase text-zinc-800 dark:text-white text-center'
+            @click='show = !show'>
+            Update your username
+          </h2>
+          <div class='text-left text-white flow-root' id='tasks-done-today'>
+            <form
+              class='flex items-center justify-between gap-6'
+              hx-put={`/app/api/settings`}
+              hx-swap='none'>
+              <input
+                type='text'
+                name='username'
+                id='username'
+                minlength='3'
+                value={username}
+                class='flex-1 px-2 py-2 text-black rounded-lg'
+              />
+              <button
+                class='w-24 p-2 font-bold text-white bg-blue-600 rounded-lg'>
+                Save
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</LayoutApp>

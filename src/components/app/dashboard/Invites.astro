@@ -13,8 +13,7 @@ const invites = await getYourInvites()
         return (
           <li class='flex items-center justify-between w-full mb-2'>
             <p>
-              You got invited to the{' '}
-              <strong>{invite.expand?.team.name}</strong>{' '}
+              You got invited to the <strong>{invite.expand?.team.name}</strong>{' '}
               team
             </p>
 
@@ -22,15 +21,13 @@ const invites = await getYourInvites()
               <button
                 class='px-2 py-1 mx-1 text-black bg-white rounded-lg'
                 hx-post={`/app/api/invite/${invite.id}/accept`}
-                hx-swap='none'
-              >
+                hx-swap='none'>
                 accept
               </button>
               <button
                 class='px-2 py-1 mx-1 text-black bg-white rounded-lg'
                 hx-post={`/app/api/invite/${invite.id}/decline`}
-                hx-swap='none'
-              >
+                hx-swap='none'>
                 decline
               </button>
             </div>

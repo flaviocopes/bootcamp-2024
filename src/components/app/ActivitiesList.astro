@@ -1,0 +1,42 @@
+---
+const { activities } = Astro.props
+---
+
+{
+  activities?.map(
+    (activity: {
+      expand: {
+        team: { id: string; name: string }
+        project: { id: string; name: string }
+        user: { username: string }
+      }
+      text: string
+    }) => (
+      <div class='flex mb-2'>
+        <div class='flex-1'>
+          {activity.expand.team && (
+            <a href={`/app/team/${activity.expand.team.id}`}>
+              <span class='p-1 mr-1 text-sm font-bold text-white bg-blue-500 rounded-md'>
+                {activity.expand.team.name}
+              </span>
+            </a>
+          )}
+          {activity.expand.project && (
+            <a href={`/app/project/${activity.expand.project.id}`}>
+              <span class='p-1 mr-1 text-sm font-bold text-black bg-yellow-500 rounded-md'>
+                {activity.expand.project.name}
+              </span>
+            </a>
+          )}
+
+          <span class='text-zinc-800 dark:text-white'>{activity.text}</span>
+        </div>
+        <div>
+          <span class='p-1 mr-1 text-sm font-bold text-black bg-white rounded-md'>
+            @{activity.expand.user.username}
+          </span>
+        </div>
+      </div>
+    )
+  )
+}

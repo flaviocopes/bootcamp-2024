@@ -1,7 +1,7 @@
 ---
 export const partial = true
 
-import { addProject } from '@data/pocketbase'
+import { addProject, addActivity } from '@data/pocketbase'
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
@@ -19,6 +19,13 @@ if (Astro.request.method === 'POST') {
       status: e.response.code,
     })
   }
+
+  await addActivity({
+    team: project.team,
+    project: project.id,
+    text: `Project "${project.name}" created`,
+    type: 'project_created',
+  })
 
   Astro.response.headers.set('HX-Redirect', `/app/project/${project.id}`)
 }

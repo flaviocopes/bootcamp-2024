@@ -16,8 +16,9 @@ if (!(await userIsTeamOwner(team_id))) {
 if (Astro.request.method === 'DELETE') {
   //delete sub on Stripe, mark project as freezed
   const res = await searchSubscriptionsByTeamId(team_id)
-  await cancelSubscription(res[0].id)
-
+  if (res.length > 0) {
+    await cancelSubscription(res[0].id)
+  }
   await updateTeam(team_id, {
     status: TeamsStatusOptions.freezed,
   })

@@ -1,0 +1,32 @@
+---
+import { getTeam, userIsTeamOwner } from '@data/pocketbase'
+import { searchSubscriptionsByTeamId } from '@lib/stripe'
+
+const { team_id = '' } = Astro.params
+
+const team = await getTeam(team_id)
+const is_owner = await userIsTeamOwner(team_id)
+
+if (!team || !is_owner) {
+  return Astro.redirect('/app/dashboard')
+}
+
+const team_page_url = new URL(
+  '/app/api/stripe/callback/success/' + team_id,
+  Astro.request.url
+).toString()
+
+const res = await searchSubscriptionsByTeamId(team_id, team_page_url)
+
+if (res.length > 0) {
+  const url = res[0].portal_url!.toString()
+  if (!url) {
+    throw new Error('An unexpected error happened')
+  }
+
+  const response = new Response(null, { status: 200 })
+  response.headers.set('HX-Redirect', url)
+
+  return response
+}
+---

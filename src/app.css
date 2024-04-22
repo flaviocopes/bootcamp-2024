@@ -15,3 +15,16 @@ dialog::backdrop {
 .font-rounded {
   font-family: 'M PLUS Rounded 1c', sans-serif;
 }
+
+.select-custom-arrow-icon {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000"><path d="M7 10l5 5 5-5z"></path></svg>'); /* SVG arrow */
+  background-repeat: no-repeat;
+  background-position: right 0 center; /* Adjust as needed */
+  background-size: 1.5rem; /* Adjust as needed */
+}
+
+@media (prefers-color-scheme: dark) {
+  .select-custom-arrow-icon {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fff"><path d="M7 10l5 5 5-5z"></path></svg>');
+  }
+}

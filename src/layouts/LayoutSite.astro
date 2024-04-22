@@ -11,6 +11,36 @@ const { title = 'Secretplan' } = Astro.props
     <meta charset='utf-8' />
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <meta name='viewport' content='width=device-width' />
+    <title>{title}</title>
+    <meta name='description' content='A project management tool' />
+
+    <meta name='apple-mobile-web-app-capable' content='yes' />
+
+    <meta
+      name='theme-color'
+      content='#fff'
+      media='(prefers-color-scheme: light)'
+    />
+    <meta
+      name='theme-color'
+      content='#000'
+      media='(prefers-color-scheme: dark)'
+    />
+
+    <link rel='manifest' crossorigin='use-credentials' href='/manifest.json' />
+
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/service-worker.js')
+            .catch(error => {
+              console.log('Service Worker registration failed: ', error)
+            })
+        })
+      }
+    </script>
+
     <meta
       http-equiv='Content-Security-Policy'
       content="  
@@ -23,7 +53,6 @@ const { title = 'Secretplan' } = Astro.props
         object-src 'none';
       "
     />
-    <title>{title}</title>
   </head>
 
   <body class='dark:bg-black dark:text-white'>

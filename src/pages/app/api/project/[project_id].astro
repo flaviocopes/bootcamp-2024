@@ -1,7 +1,12 @@
 ---
 export const partial = true
 
-import { deleteProject, updateProject } from '@data/pocketbase'
+import {
+  deleteProject,
+  updateProject,
+  addActivity,
+  getProject,
+} from '@data/pocketbase'
 import { ProjectsStatusOptions } from '@data/pocketbase-types'
 const { project_id } = Astro.params
 
@@ -12,6 +17,8 @@ if (!project_id) {
   })
 }
 
+const project = await getProject(project_id)
+
 if (Astro.request.method === 'DELETE') {
   try {
     await deleteProject(project_id)
@@ -20,6 +27,13 @@ if (Astro.request.method === 'DELETE') {
       status: 400,
     })
   }
+
+  await addActivity({
+    team: project.team,
+    project: '',
+    text: `Project "${project.name}" deleted`,
+    type: 'project_delete',
+  })
 
   return new Response(null, {
     status: 204,
@@ -49,12 +63,21 @@ if (Astro.request.method === 'PUT') {
           status: 400,
         })
       }
+
+      await addActivity({
+        team: project.team,
+        project: project.id,
+        text: `Project "${project.name}" status changed to ${status}`,
+        type: 'project_status_change',
+      })
     } else {
       return new Response('Need to set "status" parameter', { status: 400 })
     }
   } else if (action === 'change_name') {
     const project_name = formData.get('project_name') as string
     if (project_name) {
+      const old_name = project.name
+
       try {
         await updateProject(project_id, {
           name: project_name,
@@ -64,6 +87,13 @@ if (Astro.request.method === 'PUT') {
           status: 400,
         })
       }
+
+      await addActivity({
+        team: project.team,
+        project: project.id,
+        text: `Project "${old_name}" name changed to ${project.name}`,
+        type: 'project_name_change',
+      })
 
       return new Response(null, {
         status: 204,

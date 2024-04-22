@@ -1,0 +1,33 @@
+{
+  "name": "SECRETPLAN",
+  "short_name": "SECRETPLAN",
+  "theme_color": "#000",
+  "background_color": "#000",
+  "display": "fullscreen",
+  "lang": "en-US",
+  "scope": "/",
+  "start_url": "/app/dashboard",
+  "icons": [
+    {
+      "src": "icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

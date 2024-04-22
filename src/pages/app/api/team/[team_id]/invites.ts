@@ -4,6 +4,7 @@ import {
   getMembersOfTeam,
   getOwnerOfTeam,
   getTeam,
+  addActivity,
 } from '@src/data/pocketbase'
 
 import type { APIRoute } from 'astro'
@@ -21,8 +22,8 @@ export const POST: APIRoute = async ({ params, request }) => {
 
   if (
     owner.email === email ||
-    invites.filter(invite => invite.email === email).length > 0 ||
-    members.filter(member => member.email === email).length > 0
+    invites.filter((invite) => invite.email === email).length > 0 ||
+    members.filter((member) => member.email === email).length > 0
   ) {
     return new Response(
       'Email belongs to someone already invited or already part of team',
@@ -35,6 +36,13 @@ export const POST: APIRoute = async ({ params, request }) => {
   }
 
   await addInvite(team_id, email)
+
+  await addActivity({
+    team: team.id,
+    project: '',
+    text: `Invited to "${team.name}" created for ${email}`,
+    type: 'invite_created',
+  })
 
   return new Response(null, {
     status: 204,

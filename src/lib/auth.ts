@@ -129,3 +129,17 @@ export async function processTurnstile(cf_turnstile_response: string) {
 
   return data.success
 }
+
+export function setUserUsername(username: string) {
+  pb.authStore.model!.username = username
+}
+
+export async function updateOwnUsername(username: string) {
+  await pb.collection('users').update(pb.authStore.model?.id, {
+    username: username,
+  })
+}
+
+export function getCookie() {
+  return pb.authStore.exportToCookie({ secure: false })
+}

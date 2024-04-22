@@ -71,12 +71,12 @@ const is_owner = await userIsTeamOwner(team_id)
             <IconDelete />
             Delete team (and cancel subscription)
           </button>
-          <a
-            href={team.portal_url}
+          <button
+            hx-get={`/app/team/${team_id}/portal`}
             class='inline-flex items-center px-3 py-2 mt-5 mr-2 text-sm font-medium text-left text-white border border-transparent  leading-4 bg-zinc-600 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 gap-2'>
             <IconDelete />
             Manage subscription
-          </a>
+          </button>
         </div>
       </div>
     )

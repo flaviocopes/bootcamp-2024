@@ -1,16 +1,30 @@
-import { addMember, deleteInvite, getInvite } from '@src/data/pocketbase'
+import {
+  addMember,
+  deleteInvite,
+  getInvite,
+  addActivity,
+  getTeam,
+} from '@src/data/pocketbase'
 
-import { getCurrentUserId } from '@lib/auth'
+import { getCurrentUserId, getUserUsername } from '@lib/auth'
 
 import type { APIRoute } from 'astro'
 
-export const POST: APIRoute = async ({ params }) => {
+export const POST: APIRoute = async ({ params, request }) => {
   const invite = await getInvite(params.invite_id!)
+  const team = await getTeam(invite.team)
 
   if (invite) {
     await addMember(invite.team, getCurrentUserId())
     await deleteInvite(params.invite_id!)
   }
+
+  await addActivity({
+    team: team.id,
+    project: '',
+    text: `Team ${team.name} invite accepted by ${getUserUsername(request)}}`,
+    type: 'invite_accepted',
+  })
 
   return new Response(null, {
     status: 204,

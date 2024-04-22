@@ -3,7 +3,7 @@ export const partial = true
 
 import TasksList from '@components/app/tasks/TasksList.astro'
 
-import { deleteTask, updateTask, getTask } from '@data/pocketbase'
+import { deleteTask, updateTask, getTask, addActivity } from '@data/pocketbase'
 
 const { task_id = '', project_id = '' } = Astro.params
 
@@ -17,6 +17,14 @@ if (Astro.request.method === 'DELETE') {
       status: 400,
     })
   }
+
+  await addActivity({
+    team: task?.expand?.project?.team as string,
+    project: project_id,
+    text: `Task "${task.text}" deleted`,
+    type: 'task_delete',
+  })
+
   return new Response(null, { status: 200 })
 }
 
@@ -31,11 +39,23 @@ if (Astro.request.method === 'PUT') {
           completed: true,
           completed_on: new Date().toISOString(),
         })
+        await addActivity({
+          team: task?.expand?.project?.team as string,
+          project: project_id,
+          text: `Task "${task.text}" marked as completed`,
+          type: 'task_complete',
+        })
         break
       case 'uncheck':
         await updateTask(task_id, {
           completed: false,
           completed_on: '',
+        })
+        await addActivity({
+          team: task?.expand?.project?.team as string,
+          project: project_id,
+          text: `Task "${task.text}" marked as not completed`,
+          type: 'task_incomplete',
         })
         break
       case 'star':
@@ -43,22 +63,46 @@ if (Astro.request.method === 'PUT') {
           starred: true,
           starred_on: new Date().toISOString(),
         })
+        await addActivity({
+          team: task?.expand?.project?.team as string,
+          project: project_id,
+          text: `Task "${task.text}" marked as starred`,
+          type: 'task_star',
+        })
         break
       case 'unstar':
         await updateTask(task_id, {
           starred: false,
           starred_on: '',
         })
+        await addActivity({
+          team: task?.expand?.project?.team as string,
+          project: project_id,
+          text: `Task "${task.text}" marked as not starred`,
+          type: 'task_unstar',
+        })
         break
       case 'edit-text':
         await updateTask(task_id, {
           text: formData.get('task-text') as string,
+        })
+        await addActivity({
+          team: task?.expand?.project?.team as string,
+          project: project_id,
+          text: `Task "${task.text}" text edited`,
+          type: 'task_edit_text',
         })
         break
       case 'upload':
         try {
           await updateTask(task_id, {
             images: formData.getAll('images') as string[],
+          })
+          await addActivity({
+            team: task?.expand?.project?.team as string,
+            project: project_id,
+            text: `Task "${task.text}" image added`,
+            type: 'task_add_image',
           })
         } catch (e) {
           return new Response('Cannot upload image', {
@@ -70,6 +114,12 @@ if (Astro.request.method === 'PUT') {
         await updateTask(task_id, {
           //@ts-expect-error
           'images-': formData.get('image') as string,
+        })
+        await addActivity({
+          team: task?.expand?.project?.team as string,
+          project: project_id,
+          text: `Task "${task.text}" image deleted`,
+          type: 'task_delete_image',
         })
         break
       default:
