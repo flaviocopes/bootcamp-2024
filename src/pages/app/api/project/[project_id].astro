@@ -91,7 +91,7 @@ if (Astro.request.method === 'PUT') {
       await addActivity({
         team: project.team,
         project: project.id,
-        text: `Project "${old_name}" name changed to ${project.name}`,
+        text: `Project "${old_name}" name changed to ${project_name}`,
         type: 'project_name_change',
       })
 
