@@ -31,11 +31,13 @@ const { activities } = Astro.props
 
           <span class='text-zinc-800 dark:text-white'>{activity.text}</span>
         </div>
-        <div>
-          <span class='p-1 mr-1 text-sm font-bold text-black bg-white rounded-md'>
-            @{activity.expand.user.username}
-          </span>
-        </div>
+        {activity.expand.user && (
+          <div>
+            <span class='p-1 mr-1 text-sm font-bold text-black bg-white rounded-md'>
+              @{activity.expand.user.username}
+            </span>
+          </div>
+        )}
       </div>
     )
   )
