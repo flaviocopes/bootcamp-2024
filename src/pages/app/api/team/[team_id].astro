@@ -51,7 +51,7 @@ if (Astro.request.method === 'PUT') {
         team: team_id,
         project: '',
         text: `Team ${old_name} renamed to ${team_name}`,
-        type: 'team_delete',
+        type: 'team_rename',
       })
 
       return new Response(null, {
