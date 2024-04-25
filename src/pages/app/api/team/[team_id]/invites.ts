@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ params, request }) => {
   await addActivity({
     team: team.id,
     project: '',
-    text: `Invited to "${team.name}" created for ${email}`,
+    text: `Invite to "${team.name}" created for ${email}`,
     type: 'invite_created',
   })
 
