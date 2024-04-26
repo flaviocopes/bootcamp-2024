@@ -1,6 +1,8 @@
 ---
 export const partial = true
 
+import SingleProject from '@components/app/projects/SingleProject.astro'
+
 import { addTask, addActivity, getProject } from '@data/pocketbase'
 
 const { project_id = '' } = Astro.params
@@ -19,15 +21,15 @@ if (Astro.request.method === 'POST') {
     })
   }
 
-  const project = await getProject(project_id)
-
   await addActivity({
     team: project.team,
     project: project.id,
     text: `Task "${task_text}" added`,
     type: 'task_add',
   })
-
-  Astro.response.headers.set('HX-Redirect', `/app/project/${project_id}`)
 }
 ---
+
+<div id='slot' hx-swap-oob='true'>
+  <SingleProject project={project} />
+</div>

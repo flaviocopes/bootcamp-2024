@@ -1,6 +1,7 @@
 ---
 import { getProjects, getTeams, getProject } from '@data/pocketbase'
 import { getUserUsername } from '@lib/auth'
+import PersonalAndTeamsProjectsList from './sidebar/PersonalAndTeamsProjectsList.astro'
 
 import type { ProjectsResponse } from '@data/pocketbase-types'
 
@@ -52,99 +53,9 @@ const p_classes =
     </div>
   </div>
 
-  <div class='mb-6 rounded-lg bg-zinc-800'>
-    <a
-      href='/app/dashboard'
-      class={'block bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-800 border-b border-zinc-800 uppercase border-t-zinc-400 font-black rounded-t-lg ' +
-        (projects.length === 0 ? ' rounded-b-lg ' : '') +
-        (Astro.url.pathname === '/app/dashboard' &&
-          ' font-bold !bg-blue-800 ') +
-        (Astro.params.project_id &&
-          !team_id &&
-          ' !bg-white text-black border ')}>
-      Your projects
-    </a>
-
-    <div>
-      {
-        projects.map((project, index) => {
-          return (
-            <a
-              href={`/app/project/${project.id}`}
-              class={
-                'bg-zinc-900 py-2 pl-2 cursor-pointer hover:bg-zinc-800 border-b border-zinc-800' +
-                (Astro.url.pathname === `/app/project/${project.id}`
-                  ? ' font-bold !bg-blue-800'
-                  : '') +
-                (index === projects.length - 1 ? ' rounded-b-lg ' : '') +
-                ' flex justify-between'
-              }>
-              <span>{project.name}</span>
-              <span class='mr-2'>
-                {Astro.url.pathname === `/app/project/${project.id}` && (
-                  <span>▶︎</span>
-                )}
-              </span>
-            </a>
-          )
-        })
-      }
-    </div>
+  <div id='teams-and-projects-list'>
+    <PersonalAndTeamsProjectsList active_project_id={Astro.params.project_id} />
   </div>
-
-  {
-    teams.length > 0 &&
-      teams.map(team => {
-        return (
-          <div class='mb-6 rounded-lg bg-zinc-800'>
-            <a
-              href={`/app/team/${team.id}`}
-              class={
-                p_classes +
-                ' uppercase rounded-t-lg font-black ' +
-                (teams_projects[team.id].length === 0 ? ' rounded-b-lg ' : '') +
-                (Astro.url.pathname.startsWith(`/app/team/${team.id}`)
-                  ? '  !bg-blue-800 !text-white font-bold '
-                  : '') +
-                (Astro.params.project_id && team_id === team.id
-                  ? '  !bg-white dark:!text-black border '
-                  : '') +
-                'flex items-center justify-between'
-              }>
-              {team.name}
-              <span class='p-1 pr-1 mr-2 text-sm font-bold bg-white border rounded-md text-zinc-800'>
-                team
-              </span>
-            </a>
-            <div class='rounded-b-lg'>
-              {teams_projects[team.id].map((project, index) => {
-                return (
-                  <a
-                    href={`/app/project/${project.id}`}
-                    class={
-                      p_classes +
-                      (Astro.url.pathname === `/app/project/${project.id}`
-                        ? ' font-bold !bg-blue-800 !text-white'
-                        : '') +
-                      (index === teams_projects[team.id].length - 1
-                        ? ' rounded-b-lg '
-                        : '') +
-                      ' flex justify-between'
-                    }>
-                    <span>{project.name}</span>
-                    <span class='mr-2'>
-                      {Astro.url.pathname === `/app/project/${project.id}` && (
-                        <span>▶︎</span>
-                      )}
-                    </span>
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-        )
-      })
-  }
 
   <button
     class={p_classes + ' rounded-t-lg w-full text-left outline-none'}

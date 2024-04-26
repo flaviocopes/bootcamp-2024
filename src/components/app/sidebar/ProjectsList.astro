@@ -1,0 +1,27 @@
+---
+const { projects, active_project_id } = Astro.props
+
+import type { ProjectsResponse } from '@data/pocketbase-types'
+---
+
+<div>
+  {
+    projects.map((project: ProjectsResponse, index: number) => (
+      <a
+        href={`/app/project/${project.id}`}
+        class={
+          'block bg-zinc-100 dark:bg-zinc-900 py-2 pl-2 cursor-pointer  hover:bg-zinc-200 dark:hover:bg-zinc-800 border dark:border-0 dark:border-b dark:border-zinc-800 text-zinc-800 dark:text-white' +
+          (active_project_id === project.id
+            ? ' font-bold !bg-blue-600 !text-white'
+            : '') +
+          (index === projects.length - 1 ? ' rounded-b-lg ' : '') +
+          ' flex justify-between'
+        }>
+        <span>{project.name}</span>
+        <span class='mr-2'>
+          {active_project_id === project.id && <span>▶︎</span>}
+        </span>
+      </a>
+    ))
+  }
+</div>

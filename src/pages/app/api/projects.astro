@@ -1,15 +1,17 @@
 ---
 export const partial = true
 
+import PersonalAndTeamsProjectsList from '@components/app/sidebar/PersonalAndTeamsProjectsList.astro'
+import SingleProject from '@components/app/projects/SingleProject.astro'
 import { addProject, addActivity } from '@data/pocketbase'
+
+let project
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
 
   const team_id = formData.get('team_id')?.toString() || ''
   const project_name = formData.get('project_name')?.toString() || ''
-
-  let project
 
   try {
     project = await addProject(project_name, team_id)
@@ -27,6 +29,14 @@ if (Astro.request.method === 'POST') {
     type: 'project_created',
   })
 
-  Astro.response.headers.set('HX-Redirect', `/app/project/${project.id}`)
+  Astro.response.headers.set('HX-Push-Url', `/app/project/${project.id}`)
 }
 ---
+
+<div id='slot' hx-swap-oob='true'>
+  <SingleProject project={project} />
+</div>
+
+<div id='teams-and-projects-list' hx-swap-oob='true'>
+  <PersonalAndTeamsProjectsList + active_project_id={project?.id} + />
+</div>

@@ -1,0 +1,84 @@
+---
+import ProjectsList from '@components/app/sidebar/ProjectsList.astro'
+
+import { getProjects, getTeams, getProject } from '@data/pocketbase'
+
+import type { ProjectsResponse } from '@data/pocketbase-types'
+
+const projects = await getProjects({})
+
+const teams = await getTeams()
+
+const teams_projects: {
+  [key: string]: ProjectsResponse[]
+} = {}
+
+await Promise.all(
+  teams.map(async team => {
+    teams_projects[team.id] = await getProjects({
+      team_id: team.id,
+    })
+  })
+)
+
+const { active_project_id } = Astro.props
+
+let team_id = ''
+if (active_project_id) {
+  const project = await getProject(active_project_id)
+  team_id = project.team
+}
+
+const common_heading_class =
+  'block bg-zinc-100 dark:bg-zinc-900 py-2 pl-2 cursor-pointer  hover:text-white hover:bg-zinc-800 dark:hover:bg-zinc-200 dark:hover:text-zinc-800 border border dark:border-0 dark:border-b border-zinc-200 dark:border-zinc-800 uppercase  font-black rounded-t-lg text-zinc-800 dark:text-white flex items-center justify-between '
+
+const common_heading_class_active =
+  ' !bg-blue-600 !text-white !border-blue-600 '
+const common_heading_class_project_parent = ' !dark:bg-white border '
+---
+
+<div class='mb-6 rounded-lg bg-zinc-800'>
+  <a
+    href='/app/dashboard'
+    class={common_heading_class +
+      (projects.length === 0 ? ' rounded-b-lg ' : '') +
+      (Astro.url.pathname === '/app/dashboard' && common_heading_class_active) +
+      (Astro.params.project_id &&
+        !team_id &&
+        common_heading_class_project_parent)}>
+    Your projects
+  </a>
+
+  <ProjectsList projects={projects} active_project_id={active_project_id} />
+</div>
+
+{
+  teams.length > 0 &&
+    teams.map(team => {
+      return (
+        <div class='mb-6 rounded-lg bg-zinc-800'>
+          <a
+            href={`/app/team/${team.id}`}
+            class={
+              common_heading_class +
+              (teams_projects[team.id].length === 0 && ' rounded-b-lg ') +
+              (Astro.url.pathname.startsWith(`/app/team/${team.id}`) &&
+                common_heading_class_active) +
+              (active_project_id &&
+                team_id === team.id &&
+                common_heading_class_project_parent)
+            }>
+            {team.name}
+            <span class='p-1 pr-1 mr-2 text-sm font-bold bg-white border rounded-md text-zinc-800'>
+              team
+            </span>
+          </a>
+
+          <ProjectsList
+            projects={teams_projects[team.id]}
+            active_project_id={active_project_id}
+          />
+        </div>
+      )
+    })
+}

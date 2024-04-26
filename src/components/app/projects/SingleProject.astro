@@ -1,0 +1,73 @@
+---
+import ButtonAddNewTask from '@components/app/tasks/ButtonAddNewTask.astro'
+import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
+import ProjectStatus from '@components/app/projects/ProjectStatus.astro'
+import TasksList from '@components/app/tasks/TasksList.astro'
+
+const { project } = Astro.props
+---
+
+<div class='mx-auto space-y-6 text-white max-w-7xl'>
+  <div
+    class='rounded-lg bg-zinc-900 px-5 py-4 sm:py-2.5 text-xl sm:text-2xl md:text-3xl text-white uppercase text-center font-rounded font-extrabold'>
+    <div class='sm:hidden'>
+      <HamburgerMenuButton />
+    </div>
+    <span hx-get=`/app/modals/project/${project.id}/edit` hx-target='dialog'
+      >{project.name}</span
+    >
+  </div>
+
+  <div class='flex items-center justify-between mx-auto max-w-7xl'>
+    <a href={'/app/dashboard'}>
+      <button
+        type='button'
+        class='text-xl btn-header text-zinc-800 dark:text-white'>
+        ◀︎ All your projects
+      </button>
+    </a>
+    <div class='mr-0.5'>
+      <ProjectStatus project={project} />
+    </div>
+  </div>
+  <div class='space-y-6'>
+    <div class='p-10 rounded-lg shadow bg-zinc-100 dark:bg-zinc-800'>
+      <h2
+        class='pb-10 text-xl font-black text-center uppercase text-zinc-800 dark:text-white'>
+        Tasks to do
+      </h2>
+
+      <div id='tasks-todo'>
+        <TasksList done={false} project_id={project.id} />
+      </div>
+
+      <ButtonAddNewTask project_id={project.id} />
+    </div>
+
+    <div class='p-10 rounded-lg shadow bg-zinc-100 dark:bg-zinc-800'>
+      <h2
+        class='pb-10 text-xl font-black text-center uppercase text-zinc-800 dark:text-white'>
+        Tasks already done
+      </h2>
+
+      <div id='tasks-done'>
+        <TasksList done={true} project_id={project.id} />
+      </div>
+    </div>
+
+    <div
+      class='p-10 text-zinc-800 dark:text-white rounded-lg bg-zinc-100 dark:bg-zinc-800'>
+      <h2 class='pb-0 text-xl font-black text-center uppercase font-rounded'>
+        Danger zone
+      </h2>
+      <div class='w-full mx-auto text-center'>
+        <button
+          hx-delete={`/app/api/project/${project.id}`}
+          hx-confirm='Are you sure?'
+          class='px-3 py-2 mx-auto mt-5 mr-2 text-sm font-medium leading-4 text-white border border-transparent rounded-md shadow-sm bg-zinc-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'>
+          Delete project
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

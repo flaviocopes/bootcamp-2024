@@ -7,10 +7,15 @@ import ButtonCancel from '@components/app/modals/ButtonCancel.astro'
 import InputField from '@components/app/modals/InputField.astro'
 
 const { project_id } = Astro.params
+
+Astro.response.headers.set('Cache-Control', 'max-age=3600')
 ---
 
 <ModalLayout title='New task'>
-  <form class='space-y-6' hx-post={`/app/api/project/${project_id}/task`}>
+  <form
+    class='space-y-6'
+    hx-post={`/app/api/project/${project_id}/task`}
+    hx-on:htmx:after-request="document.querySelector('dialog').close()">
     <div>
       <div class='mt-1'>
         <InputField name='task_text' />
