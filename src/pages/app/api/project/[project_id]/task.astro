@@ -19,8 +19,6 @@ if (Astro.request.method === 'POST') {
     })
   }
 
-  const project = await getProject(project_id)
-
   await addActivity({
     team: project.team,
     project: project.id,
