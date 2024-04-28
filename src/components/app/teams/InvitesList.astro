@@ -12,7 +12,7 @@ const invites = await getInvitesForTeam(team.id)
       <h2 class='pb-4 mt-0 text-lg font-bold text-zinc-800 dark:text-white text-center uppercase'>
         Invited people
       </h2>
-      <ul class='list-disc list-inside'>
+      <ul class='list-disc list-inside text-zinc-800 dark:text-white'>
         {invites.map(invite => (
           <li>{invite.email}</li>
         ))}
