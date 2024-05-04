@@ -65,9 +65,11 @@ const activities = await getActivities({})
                 name='user_id'>
                 <option value=''>Choose a user</option>
                 <option value={getCurrentUserId()}>You</option>
-                {collaborators.map(user => (
-                  <option value={user.id}>User: {user.username}</option>
-                ))}
+                {collaborators
+                  .filter(user => user?.id !== getCurrentUserId())
+                  .map(user => (
+                    <option value={user.id}>User: {user.username}</option>
+                  ))}
               </select>
             )
           }
