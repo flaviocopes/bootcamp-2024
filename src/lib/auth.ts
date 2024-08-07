@@ -1,5 +1,3 @@
-import { pb } from '@src/data/pocketbase'
-
 import type { UsersResponse } from '@src/data/pocketbase-types'
 
 export const isValidEmail = (email: string) => {
@@ -28,7 +26,7 @@ export function isValidData(email: string, password: string) {
   return true
 }
 
-export async function createUser(email: string, password: string) {
+export async function createUser(pb: any, email: string, password: string) {
   return await pb.collection('users').create({
     email: email,
     password: password,
@@ -37,11 +35,11 @@ export async function createUser(email: string, password: string) {
   })
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(pb: any, email: string, password: string) {
   return await pb.collection('users').authWithPassword(email, password)
 }
 
-export function setCookieAndRedirectToDashboard() {
+export function setCookieAndRedirectToDashboard(pb: any) {
   return new Response(null, {
     status: 301,
     headers: {
@@ -54,7 +52,7 @@ export function setCookieAndRedirectToDashboard() {
   })
 }
 
-export async function isLoggedIn(request: Request) {
+export async function isLoggedIn(pb: any, request: Request) {
   if (!request.headers.get('Cookie')) {
     return false
   }
@@ -74,36 +72,36 @@ export async function isLoggedIn(request: Request) {
   return false
 }
 
-export async function getUserUsername(request: Request) {
+export async function getUserUsername(pb: any, request: Request) {
   pb.authStore.loadFromCookie(request.headers.get('Cookie') || '', 'pb_auth')
   return pb.authStore.model?.username
 }
 
-export async function sendResetPasswordLink(email: string) {
+export async function sendResetPasswordLink(pb: any, email: string) {
   await pb.collection('users').requestPasswordReset(email)
 }
 
-export async function getUserObjectFromDb(user_id: string) {
+export async function getUserObjectFromDb(pb: any, user_id: string) {
   const user: UsersResponse = await pb.collection('users').getOne(user_id)
 
   return user
 }
 
-export function getCurrentUserId() {
+export function getCurrentUserId(pb: any) {
   return pb.authStore.model?.id
 }
 
-export function getCurrentUserEmail() {
+export function getCurrentUserEmail(pb: any) {
   return pb.authStore.model?.email
 }
 
-export async function isUserVerified() {
+export async function isUserVerified(pb: any) {
   //we load from db as user object is not updated immediately if user clicks verify email
-  const user = await getUserObjectFromDb(getCurrentUserId())
+  const user = await getUserObjectFromDb(pb, getCurrentUserId(pb))
   return user.verified
 }
 
-export async function sendVerificationEmail(email: string) {
+export async function sendVerificationEmail(pb: any, email: string) {
   await pb.collection('users').requestVerification(email)
 }
 
@@ -130,16 +128,16 @@ export async function processTurnstile(cf_turnstile_response: string) {
   return data.success
 }
 
-export function setUserUsername(username: string) {
+export function setUserUsername(pb: any, username: string) {
   pb.authStore.model!.username = username
 }
 
-export async function updateOwnUsername(username: string) {
+export async function updateOwnUsername(pb: any, username: string) {
   await pb.collection('users').update(pb.authStore.model?.id, {
     username: username,
   })
 }
 
-export function getCookie() {
+export function getCookie(pb: any) {
   return pb.authStore.exportToCookie({ secure: false })
 }

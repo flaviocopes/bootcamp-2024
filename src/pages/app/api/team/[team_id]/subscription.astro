@@ -8,7 +8,7 @@ import { cancelSubscription, searchSubscriptionsByTeamId } from '@lib/stripe'
 const { team_id = '' } = Astro.params
 
 //check user is owner of the team
-if (!(await userIsTeamOwner(team_id))) {
+if (!(await userIsTeamOwner(Astro.locals.pb, team_id))) {
   return new Response('Not authorized', { status: 401 })
 }
 
@@ -19,7 +19,7 @@ if (Astro.request.method === 'DELETE') {
   if (res.length > 0) {
     await cancelSubscription(res[0].id)
   }
-  await updateTeam(team_id, {
+  await updateTeam(Astro.locals.pb, team_id, {
     status: TeamsStatusOptions.freezed,
   })
 

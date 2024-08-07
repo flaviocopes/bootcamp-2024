@@ -8,7 +8,7 @@ import Invites from '@components/app/dashboard/Invites.astro'
 
 import { getProjects } from '@data/pocketbase'
 
-const projects = await getProjects({})
+const projects = await getProjects({ pb: Astro.locals.pb })
 ---
 
 <LayoutApp title='Dashboard'>

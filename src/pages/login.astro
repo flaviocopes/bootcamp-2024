@@ -8,7 +8,7 @@ import {
   processTurnstile,
 } from '@lib/auth'
 
-if (await isLoggedIn(Astro.request)) {
+if (await isLoggedIn(Astro.locals.pb, Astro.request)) {
   return Astro.redirect('/app/dashboard')
 }
 
@@ -28,8 +28,8 @@ if (Astro.request.method === 'POST') {
   } else {
     if (isValidData(email, password)) {
       try {
-        await loginUser(email, password)
-        return setCookieAndRedirectToDashboard()
+        await loginUser(Astro.locals.pb, email, password)
+        return setCookieAndRedirectToDashboard(Astro.locals.pb)
       } catch (e) {
         error = 'Could not login'
       }

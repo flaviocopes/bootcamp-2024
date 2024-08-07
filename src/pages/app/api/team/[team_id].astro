@@ -5,7 +5,7 @@ import { deleteTeam, updateTeam, getTeam, addActivity } from '@data/pocketbase'
 
 const { team_id = '' } = Astro.params
 
-const team = await getTeam(team_id)
+const team = await getTeam(Astro.locals.pb, team_id)
 
 import { cancelSubscription, searchSubscriptionsByTeamId } from '@lib/stripe'
 
@@ -15,9 +15,10 @@ if (Astro.request.method === 'DELETE') {
     await cancelSubscription(res[0].id)
   }
 
-  await deleteTeam(team_id)
+  await deleteTeam(Astro.locals.pb, team_id)
 
   await addActivity({
+    pb: Astro.locals.pb,
     team: '',
     project: '',
     text: `Team ${team.name} deleted`,
@@ -43,11 +44,12 @@ if (Astro.request.method === 'PUT') {
     if (team_name) {
       const old_name = team.name
 
-      await updateTeam(team_id, {
+      await updateTeam(Astro.locals.pb, team_id, {
         name: team_name,
       })
 
       await addActivity({
+        pb: Astro.locals.pb,
         team: team_id,
         project: '',
         text: `Team ${old_name} renamed to ${team_name}`,

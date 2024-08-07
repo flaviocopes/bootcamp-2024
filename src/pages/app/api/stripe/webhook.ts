@@ -5,7 +5,7 @@ import { updateTeam, getTeam, addActivity } from '@src/data/pocketbase'
 import { TeamsStatusOptions } from '@src/data/pocketbase-types'
 import { initStripe } from '@lib/stripe'
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   const webhook_secret =
     import.meta.env.STRIPE_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET
   const stripe = initStripe()
@@ -34,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
     const subscription = event.data.object
     const { metadata } = subscription
     const { team_id, team_page_url } = metadata
-    const team = await getTeam(team_id)
+    const team = await getTeam(locals.pb, team_id)
 
     const portal_url = (
       await stripe.billingPortal.sessions.create({
@@ -43,13 +43,14 @@ export const POST: APIRoute = async ({ request }) => {
       })
     ).url
 
-    await updateTeam(team_id, {
+    await updateTeam(locals.pb, team_id, {
       status: TeamsStatusOptions.active,
       portal_url,
       stripe_subscription_id: subscription.id,
     })
 
     await addActivity({
+      pb: locals.pb,
       team: team_id,
       project: '',
       text: `Team ${team.name} subscription created`,
@@ -62,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const { team_id } = metadata
 
-    const team = await getTeam(team_id)
+    const team = await getTeam(locals.pb, team_id)
 
     if (!team) {
       throw new Error('Team not found')
@@ -74,11 +75,12 @@ export const POST: APIRoute = async ({ request }) => {
       throw new Error('Subscription ID mismatch')
     }
 
-    await updateTeam(team_id, {
+    await updateTeam(locals.pb, team_id, {
       status: TeamsStatusOptions.freezed,
     })
 
     await addActivity({
+      pb: locals.pb,
       team: team_id,
       project: '',
       text: `Team ${team.name} subscription deleted`,
@@ -91,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const { team_id } = metadata
 
-    const team = await getTeam(team_id)
+    const team = await getTeam(locals.pb, team_id)
 
     if (!team) {
       throw new Error('Team not found')
@@ -103,7 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
       throw new Error('Subscription ID mismatch')
     }
 
-    await updateTeam(team_id, {
+    await updateTeam(locals.pb, team_id, {
       status: TeamsStatusOptions.freezed,
     })
   }

@@ -3,7 +3,7 @@ import { getUserUsername } from '@lib/auth'
 import LayoutApp from '@layouts/LayoutApp.astro'
 import HamburgerMenuButton from '@components/app/HamburgerMenuButton.astro'
 
-const username = await getUserUsername(Astro.request)
+const username = await getUserUsername(Astro.locals.pb, Astro.request)
 ---
 
 <LayoutApp title='Activities'>

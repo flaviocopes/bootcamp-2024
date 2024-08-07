@@ -7,11 +7,11 @@ import { deleteTask, updateTask, getTask, addActivity } from '@data/pocketbase'
 
 const { task_id = '', project_id = '' } = Astro.params
 
-const task = await getTask(task_id)
+const task = await getTask(Astro.locals.pb, task_id)
 
 if (Astro.request.method === 'DELETE') {
   try {
-    await deleteTask(task_id)
+    await deleteTask(Astro.locals.pb, task_id)
   } catch (e) {
     return new Response('An error occurred', {
       status: 400,
@@ -19,6 +19,7 @@ if (Astro.request.method === 'DELETE') {
   }
 
   await addActivity({
+    pb: Astro.locals.pb,
     team: task?.expand?.project?.team as string,
     project: project_id,
     text: `Task "${task.text}" deleted`,
@@ -35,11 +36,12 @@ if (Astro.request.method === 'PUT') {
   try {
     switch (action) {
       case 'check':
-        await updateTask(task_id, {
+        await updateTask(Astro.locals.pb, task_id, {
           completed: true,
           completed_on: new Date().toISOString(),
         })
         await addActivity({
+          pb: Astro.locals.pb,
           team: task?.expand?.project?.team as string,
           project: project_id,
           text: `Task "${task.text}" marked as completed`,
@@ -47,11 +49,12 @@ if (Astro.request.method === 'PUT') {
         })
         break
       case 'uncheck':
-        await updateTask(task_id, {
+        await updateTask(Astro.locals.pb, task_id, {
           completed: false,
           completed_on: '',
         })
         await addActivity({
+          pb: Astro.locals.pb,
           team: task?.expand?.project?.team as string,
           project: project_id,
           text: `Task "${task.text}" marked as not completed`,
@@ -59,11 +62,12 @@ if (Astro.request.method === 'PUT') {
         })
         break
       case 'star':
-        await updateTask(task_id, {
+        await updateTask(Astro.locals.pb, task_id, {
           starred: true,
           starred_on: new Date().toISOString(),
         })
         await addActivity({
+          pb: Astro.locals.pb,
           team: task?.expand?.project?.team as string,
           project: project_id,
           text: `Task "${task.text}" marked as starred`,
@@ -71,11 +75,12 @@ if (Astro.request.method === 'PUT') {
         })
         break
       case 'unstar':
-        await updateTask(task_id, {
+        await updateTask(Astro.locals.pb, task_id, {
           starred: false,
           starred_on: '',
         })
         await addActivity({
+          pb: Astro.locals.pb,
           team: task?.expand?.project?.team as string,
           project: project_id,
           text: `Task "${task.text}" marked as not starred`,
@@ -83,10 +88,11 @@ if (Astro.request.method === 'PUT') {
         })
         break
       case 'edit-text':
-        await updateTask(task_id, {
+        await updateTask(Astro.locals.pb, task_id, {
           text: formData.get('task-text') as string,
         })
         await addActivity({
+          pb: Astro.locals.pb,
           team: task?.expand?.project?.team as string,
           project: project_id,
           text: `Task "${task.text}" text edited`,
@@ -95,10 +101,11 @@ if (Astro.request.method === 'PUT') {
         break
       case 'upload':
         try {
-          await updateTask(task_id, {
+          await updateTask(Astro.locals.pb, task_id, {
             images: formData.getAll('images') as string[],
           })
           await addActivity({
+            pb: Astro.locals.pb,
             team: task?.expand?.project?.team as string,
             project: project_id,
             text: `Task "${task.text}" image added`,
@@ -111,11 +118,12 @@ if (Astro.request.method === 'PUT') {
         }
         break
       case 'delete-image':
-        await updateTask(task_id, {
+        await updateTask(Astro.locals.pb, task_id, {
           //@ts-expect-error
           'images-': formData.get('image') as string,
         })
         await addActivity({
+          pb: Astro.locals.pb,
           team: task?.expand?.project?.team as string,
           project: project_id,
           text: `Task "${task.text}" image deleted`,

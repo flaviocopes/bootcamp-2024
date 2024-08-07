@@ -5,8 +5,8 @@ import PersonalAndTeamsProjectsList from './sidebar/PersonalAndTeamsProjectsList
 
 import type { ProjectsResponse } from '@data/pocketbase-types'
 
-const projects = await getProjects({})
-const teams = await getTeams()
+const projects = await getProjects({ pb: Astro.locals.pb })
+const teams = await getTeams(Astro.locals.pb)
 
 const teams_projects: {
   [key: string]: ProjectsResponse[]
@@ -15,6 +15,7 @@ const teams_projects: {
 await Promise.all(
   teams.map(async team => {
     teams_projects[team.id] = await getProjects({
+      pb: Astro.locals.pb,
       team_id: team.id,
     })
   })
@@ -81,6 +82,6 @@ const p_classes =
   </a>
 
   <a class={p_classes + ' rounded-b-lg w-full text-left'} hx-post='/logout'>
-    Logout @{getUserUsername(Astro.request)}
+    Logout @{getUserUsername(Astro.locals.pb, Astro.request)}
   </a>
 </aside>

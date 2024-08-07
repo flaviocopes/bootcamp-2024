@@ -4,8 +4,8 @@ import { searchSubscriptionsByTeamId } from '@lib/stripe'
 
 const { team_id = '' } = Astro.params
 
-const team = await getTeam(team_id)
-const is_owner = await userIsTeamOwner(team_id)
+const team = await getTeam(Astro.locals.pb, team_id)
+const is_owner = await userIsTeamOwner(Astro.locals.pb, team_id)
 
 if (!team || !is_owner) {
   return Astro.redirect('/app/dashboard')

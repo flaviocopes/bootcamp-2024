@@ -9,7 +9,8 @@ import InputField from '@components/app/modals/InputField.astro'
 const { project_id } = Astro.params
 
 import { getProject } from '@data/pocketbase'
-const project = await getProject(project_id!)
+
+const project = await getProject(Astro.locals.pb, project_id!)
 ---
 
 <ModalLayout title='Edit project name'>

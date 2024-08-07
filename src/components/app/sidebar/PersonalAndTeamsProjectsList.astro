@@ -5,9 +5,9 @@ import { getProjects, getTeams, getProject } from '@data/pocketbase'
 
 import type { ProjectsResponse } from '@data/pocketbase-types'
 
-const projects = await getProjects({})
+const projects = await getProjects({ pb: Astro.locals.pb })
 
-const teams = await getTeams()
+const teams = await getTeams(Astro.locals.pb)
 
 const teams_projects: {
   [key: string]: ProjectsResponse[]
@@ -16,6 +16,7 @@ const teams_projects: {
 await Promise.all(
   teams.map(async team => {
     teams_projects[team.id] = await getProjects({
+      pb: Astro.locals.pb,
       team_id: team.id,
     })
   })
@@ -25,7 +26,7 @@ const { active_project_id } = Astro.props
 
 let team_id = ''
 if (active_project_id) {
-  const project = await getProject(active_project_id)
+  const project = await getProject(Astro.locals.pb, active_project_id)
   team_id = project.team
 }
 

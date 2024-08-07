@@ -2,11 +2,10 @@
 const { team } = Astro.props
 
 import { getMembersOfTeam, getOwnerOfTeam } from '@data/pocketbase'
-
 import { getCurrentUserId } from '@lib/auth'
 
-const members = await getMembersOfTeam(team.id)
-const owner = await getOwnerOfTeam(team)
+const members = await getMembersOfTeam(Astro.locals.pb, team.id)
+const owner = await getOwnerOfTeam(Astro.locals.pb, team)
 ---
 
 <h2
@@ -21,7 +20,7 @@ const owner = await getOwnerOfTeam(team)
       owner
     </span>
     {
-      owner.id == getCurrentUserId() && (
+      owner.id == getCurrentUserId(Astro.locals.pb) && (
         <span
           class='rounded-md p-1 py-0.5 bg-orange-500
         text-white font-bold text-sm mr-1'>
@@ -36,7 +35,7 @@ const owner = await getOwnerOfTeam(team)
   {
     members?.map(member => (
       <div class='pb-10 list-disc list-inside text-zinc-800 dark:text-white flex'>
-        {member.id == getCurrentUserId() && (
+        {member.id == getCurrentUserId(Astro.locals.pb) && (
           <span
             class='rounded-md p-1 py-0.5 bg-orange-500
         text-white font-bold text-sm uppercase mr-1'>

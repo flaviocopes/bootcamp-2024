@@ -10,6 +10,7 @@ const project_id = Astro.url.searchParams.get('project_id')?.toString() || ''
 const user_id = Astro.url.searchParams.get('user_id')?.toString() || ''
 
 const activities = await getActivities({
+  pb: Astro.locals.pb,
   team_id,
   project_id,
   user_id,

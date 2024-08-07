@@ -1,8 +1,9 @@
 ---
 import IconDelete from "@components/app/icons/IconDelete.astro";
 const { task } = Astro.props
-import { processImages } from '@data/pocketbase'
-const images = processImages(task)
+import {  processImages } from '@data/pocketbase'
+
+const images = processImages(Astro.locals.pb, task)
 ---
 
 <div class={images.length ? 'flex flex-wrap mt-2 gap-4' : ''}>

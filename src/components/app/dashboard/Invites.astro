@@ -3,7 +3,7 @@ export const partial = true
 
 import { getYourInvites } from '@data/pocketbase'
 
-const invites = await getYourInvites()
+const invites = await getYourInvites(Astro.locals.pb)
 ---
 
 {

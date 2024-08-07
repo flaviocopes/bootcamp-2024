@@ -9,7 +9,7 @@ import InputField from '@components/app/modals/InputField.astro'
 const { team_id } = Astro.params
 
 import { getTeam } from '@data/pocketbase'
-const team = await getTeam(team_id!)
+const team = await getTeam(Astro.locals.pb, team_id!)
 ---
 
 <ModalLayout title='Edit team name'>
