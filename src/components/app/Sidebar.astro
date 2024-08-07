@@ -23,7 +23,7 @@ await Promise.all(
 
 let team_id = ''
 if (Astro.params.project_id) {
-  const project = await getProject(Astro.params.project_id)
+  const project = await getProject(Astro.locals.pb, Astro.params.project_id)
   team_id = project.team
 }
 
