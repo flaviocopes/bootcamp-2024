@@ -3,7 +3,7 @@ const { team } = Astro.props
 
 import { getInvitesForTeam } from '@data/pocketbase'
 
-const invites = await getInvitesForTeam(team.id)
+const invites = await getInvitesForTeam(Astro.locals.pb, team.id)
 ---
 
 {

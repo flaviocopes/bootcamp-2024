@@ -1,14 +1,15 @@
 ---
 import LayoutApp from '@layouts/LayoutApp.astro'
 import { getProject, getTeam } from '@data/pocketbase'
+
 const { project_id = '' } = Astro.params
 import SingleProject from '@components/app/projects/SingleProject.astro'
 
 let project
 try {
-  project = await getProject(project_id)
+  project = await getProject(Astro.locals.pb, project_id)
   if (project.team) {
-    const team = await getTeam(project.team)
+    const team = await getTeam(Astro.locals.pb, project.team)
     if (team.status === 'freezed') {
       return Astro.redirect(`/app/team/${team.id}`)
     }

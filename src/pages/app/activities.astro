@@ -9,14 +9,13 @@ import {
   getCollaborators,
   getTeams,
 } from '@data/pocketbase'
-
 import { getCurrentUserId } from '@lib/auth'
 
-const teams = await getTeams()
-const projects = await getAllProjects()
-const collaborators = await getCollaborators()
+const teams = await getTeams(Astro.locals.pb)
+const projects = await getAllProjects(Astro.locals.pb)
+const collaborators = await getCollaborators(Astro.locals.pb)
 
-const activities = await getActivities({})
+const activities = await getActivities({ pb: Astro.locals.pb })
 ---
 
 <LayoutApp title='Activities'>
@@ -64,9 +63,11 @@ const activities = await getActivities({})
                 class='w-full h-8 px-4 text-sm border-r-8 border-transparent rounded appearance-none outline outline-1 outline-neutral-700 select-custom-arrow-icon focus:ring-offset-0 dark:bg-zinc-900 dark:text-white'
                 name='user_id'>
                 <option value=''>Choose a user</option>
-                <option value={getCurrentUserId()}>You</option>
+                <option value={getCurrentUserId(Astro.locals.pb)}>You</option>
                 {collaborators
-                  .filter(user => user?.id !== getCurrentUserId())
+                  .filter(
+                    user => user?.id !== getCurrentUserId(Astro.locals.pb)
+                  )
                   .map(user => (
                     <option value={user.id}>User: {user.username}</option>
                   ))}

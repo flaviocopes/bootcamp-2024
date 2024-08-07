@@ -11,13 +11,13 @@ import IconDelete from '@components/app/icons/IconDelete.astro'
 
 const { team_id = '' } = Astro.params
 
-let team = await getTeam(team_id)
+let team = await getTeam(Astro.locals.pb, team_id)
 
 if (!team) {
   return Astro.redirect('/app/dashboard')
 }
 
-const is_owner = await userIsTeamOwner(team_id)
+const is_owner = await userIsTeamOwner(Astro.locals.pb, team_id)
 ---
 
 <Layout>

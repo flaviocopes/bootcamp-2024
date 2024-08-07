@@ -6,9 +6,10 @@ import { addTeam, addActivity } from '@data/pocketbase'
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   const team_name = formData.get('team_name') as string
-  const team = await addTeam(team_name)
+  const team = await addTeam(Astro.locals.pb, team_name)
 
   await addActivity({
+    pb: Astro.locals.pb,
     team: team.id,
     project: '',
     text: `Team ${team.name} created`,

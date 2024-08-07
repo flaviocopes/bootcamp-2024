@@ -11,7 +11,7 @@ import {
   processTurnstile,
 } from '@lib/auth'
 
-if (await isLoggedIn(Astro.request)) {
+if (await isLoggedIn(Astro.locals.pb, Astro.request)) {
   return Astro.redirect('/app/dashboard')
 }
 
@@ -37,10 +37,10 @@ if (Astro.request.method === 'POST') {
         error = 'Invalid data'
       } else {
         try {
-          await createUser(email, password)
-          await loginUser(email, password)
-          await sendVerificationEmail(email)
-          return setCookieAndRedirectToDashboard()
+          await createUser(Astro.locals.pb, email, password)
+          await loginUser(Astro.locals.pb, email, password)
+          await sendVerificationEmail(Astro.locals.pb, email)
+          return setCookieAndRedirectToDashboard(Astro.locals.pb)
         } catch (e) {
           error = 'Could not create user'
         }

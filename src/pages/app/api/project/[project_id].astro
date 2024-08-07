@@ -17,11 +17,11 @@ if (!project_id) {
   })
 }
 
-const project = await getProject(project_id)
+const project = await getProject(Astro.locals.pb, project_id)
 
 if (Astro.request.method === 'DELETE') {
   try {
-    await deleteProject(project_id)
+    await deleteProject(Astro.locals.pb, project_id)
   } catch (e) {
     return new Response('An error occurred', {
       status: 400,
@@ -29,6 +29,7 @@ if (Astro.request.method === 'DELETE') {
   }
 
   await addActivity({
+    pb: Astro.locals.pb,
     team: project.team,
     project: '',
     text: `Project "${project.name}" deleted`,
@@ -54,7 +55,7 @@ if (Astro.request.method === 'PUT') {
 
     if (status) {
       try {
-        await updateProject(project_id, {
+        await updateProject(Astro.locals.pb, project_id, {
           status:
             ProjectsStatusOptions[status as keyof typeof ProjectsStatusOptions],
         })
@@ -65,6 +66,7 @@ if (Astro.request.method === 'PUT') {
       }
 
       await addActivity({
+        pb: Astro.locals.pb,
         team: project.team,
         project: project.id,
         text: `Project "${project.name}" status changed to ${status}`,
@@ -79,7 +81,7 @@ if (Astro.request.method === 'PUT') {
       const old_name = project.name
 
       try {
-        await updateProject(project_id, {
+        await updateProject(Astro.locals.pb, project_id, {
           name: project_name,
         })
       } catch (e) {
@@ -89,6 +91,7 @@ if (Astro.request.method === 'PUT') {
       }
 
       await addActivity({
+        pb: Astro.locals.pb,
         team: project.team,
         project: project.id,
         text: `Project "${old_name}" name changed to ${project_name}`,

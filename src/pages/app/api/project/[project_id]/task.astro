@@ -7,14 +7,14 @@ import { addTask, addActivity, getProject } from '@data/pocketbase'
 
 const { project_id = '' } = Astro.params
 
-const project = await getProject(project_id)
+const project = await getProject(Astro.locals.pb, project_id)
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   const task_text = formData.get('task_text') as string
 
   try {
-    await addTask(project_id, task_text)
+    await addTask(Astro.locals.pb, project_id, task_text)
   } catch (e) {
     return new Response('An error occurred', {
       status: 400,
@@ -22,6 +22,7 @@ if (Astro.request.method === 'POST') {
   }
 
   await addActivity({
+    pb: Astro.locals.pb,
     team: project.team,
     project: project.id,
     text: `Task "${task_text}" added`,

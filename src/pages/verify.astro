@@ -6,15 +6,15 @@ import {
   getCurrentUserEmail,
 } from '@lib/auth'
 
-if (!(await isLoggedIn(Astro.request))) {
+if (!(await isLoggedIn(Astro.locals.pb, Astro.request))) {
   return Astro.redirect('/login')
 }
 
-let email = await getCurrentUserEmail()
+let email = await getCurrentUserEmail(Astro.locals.pb)
 let message = ''
 
 if (Astro.request.method === 'POST') {
-  await sendVerificationEmail(email)
+  await sendVerificationEmail(Astro.locals.pb, email)
   message = '✅ Verification email sent'
 }
 ---

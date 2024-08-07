@@ -12,9 +12,9 @@ const { project_id, done, starred, team_id } = Astro.props
 let tasks = null
 
 if (starred) {
-  tasks = await getStarredTasks({ team_id })
+  tasks = await getStarredTasks({ pb: Astro.locals.pb, team_id })
 } else {
-  tasks = await getTasks({ project_id, done })
+  tasks = await getTasks({ pb: Astro.locals.pb, project_id, done })
 }
 ---
 
