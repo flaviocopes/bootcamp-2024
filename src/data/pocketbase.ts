@@ -89,6 +89,10 @@ export async function getTasks({
   pb,
   project_id = null,
   done = false,
+}: {
+  pb: TypedPocketBase
+  project_id: string | null
+  done: boolean
 }): Promise<TasksResponse<TexpandProject>[]> {
   const options = {
     filter: '',
@@ -154,6 +158,9 @@ export async function updateTask(
 export async function getStarredTasks({
   pb,
   team_id = null,
+}: {
+  pb: TypedPocketBase
+  team_id: string | null
 }): Promise<TasksResponse<TexpandProject>[]> {
   const options = {
     sort: '-starred_on',

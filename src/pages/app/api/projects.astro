@@ -14,12 +14,16 @@ if (Astro.request.method === 'POST') {
   const project_name = formData.get('project_name')?.toString() || ''
 
   try {
-    project = await addProject(project_name, team_id)
+    project = await addProject(Astro.locals.pb, project_name, team_id)
   } catch (e: any) {
     console.log(e)
-    return new Response(e.response.message, {
-      status: e.response.code,
-    })
+    if (e.response?.message) {
+      return new Response(e.response.message, {
+        status: e.response.code,
+      })
+    } else {
+      return new Response(e, { status: 500 })
+    }
   }
 
   await addActivity({
